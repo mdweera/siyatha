@@ -11,3 +11,6 @@
 - Photo uploads are stored in `public/uploads/prints` and gitignored. Checkout prices print lines from the size id, not the client price.
 - Vercel build failed because `src/lib/mongodb.ts` threw while route modules were imported. `dbConnect()` now throws only when a request needs the database. The Vercel project still needs `MONGODB_URI`, `NEXTAUTH_SECRET`, and `NEXTAUTH_URL`.
 - Each print size in `src/lib/storefront.ts` has a `pixels` hint. The photo-print page leads with 4×6, 5×7, passport sheet, and 8×10.
+- Public colours keep pink `#DE2684`, crimson `#B10C53`, purple `#681878`, and cream `#F9E094`, with yellow `#F2B400` on primary buttons and the delivery progress. WhatsApp actions use `#25D366`. A dismissible one-day banner sits at the top. The bottom bar shows the cart total and how much is left for free delivery.
+- Photo print prices and the two bulk discounts are `Settings.onlinePrintPrices` in `pos_app_sl`. Siyatha reads them with delivery through `getShopSettings()`. The built-in list in `src/lib/storefront.ts` is the fallback. Checkout reprices from that record.
+- Checkout does not require an account. The shop grid shows packaging and craft unless the visitor searches. WhatsApp actions use `#25D366`.

@@ -60,7 +60,7 @@ export default async function OrderConfirmationPage({ params }: { params: Promis
             </div>
             <div className="flex justify-between">
               <span className="text-gray-600">Status:</span>
-              <span className="font-semibold text-blue-600 capitalize">{order.status}</span>
+              <span className="font-semibold text-[#681878] capitalize">{order.status}</span>
             </div>
           </div>
 
@@ -106,7 +106,7 @@ export default async function OrderConfirmationPage({ params }: { params: Promis
         <div className="space-y-6">
           <div className="bg-white rounded-2xl border shadow-sm p-8">
             <div className="flex items-center gap-3 mb-6">
-              <Truck className="text-blue-600" size={24} />
+              <Truck className="text-[#681878]" size={24} />
               <h2 className="text-2xl font-bold text-gray-900">Shipping Information</h2>
             </div>
 
@@ -156,7 +156,7 @@ export default async function OrderConfirmationPage({ params }: { params: Promis
             </Link>
             <Link 
               href="/dashboard"
-              className="flex-1 border border-blue-600 text-blue-600 py-3 px-6 rounded-lg font-semibold text-center hover:bg-blue-50 transition"
+              className="flex-1 rounded-lg border border-[#681878] py-3 px-6 text-center font-semibold text-[#681878] transition hover:bg-[var(--yellow-tint)]"
             >
               View My Orders
             </Link>

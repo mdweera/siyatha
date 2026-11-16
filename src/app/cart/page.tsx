@@ -1,7 +1,7 @@
 "use client";
 
 import { useCartStore } from "@/store/useCartStore";
-import { INITIAL_FREE_DELIVERY, quoteDelivery, type ShopDelivery } from "@/lib/delivery";
+import { INITIAL_DELIVERY_CHARGE, INITIAL_FREE_DELIVERY, quoteDelivery, type ShopDelivery } from "@/lib/delivery";
 import { formatRs } from "@/lib/storefront";
 import { Minus, PhoneCall, Plus, Trash2 } from "lucide-react";
 import Image from "next/image";
@@ -13,7 +13,7 @@ export default function CartPage() {
   const [mounted, setMounted] = useState(false);
   const [delivery, setDelivery] = useState<ShopDelivery>({
     freeDeliveryAbove: INITIAL_FREE_DELIVERY,
-    deliveryCharge: 0,
+    deliveryCharge: INITIAL_DELIVERY_CHARGE,
   });
   const orderPhone = "+94 76 660 9143";
   const telHref = `tel:${orderPhone.replace(/\s+/g, "")}`;
@@ -45,7 +45,7 @@ export default function CartPage() {
         <div className="surface-card rounded-[1.75rem] p-12 text-center">
           <p className="text-gray-500 mb-6 text-lg">Your cart is empty.</p>
           <div className="flex flex-wrap justify-center gap-3">
-            <Link href="/photo-prints/order" className="inline-flex items-center gap-2 px-6 py-3 bg-slate-900 text-white rounded-full font-medium">
+            <Link href="/photo-prints/order" className="btn-primary no-underline">
               Upload photos
             </Link>
             <Link href="/packaging" className="inline-flex items-center gap-2 px-6 py-3 border border-slate-200 rounded-full font-medium text-slate-800">
@@ -72,28 +72,30 @@ export default function CartPage() {
                 <div className="flex-grow">
                   <h3 className="font-semibold text-gray-900 line-clamp-2">{item.name}</h3>
                   {item.detail ? <p className="text-xs text-slate-500 mt-1 line-clamp-1">{item.detail}</p> : null}
-                  <p className="mt-1 font-bold text-[#B10C53]">{formatRs(item.price)}</p>
+                  <p className="mt-1 font-bold text-[var(--ink)]">{formatRs(item.price)}</p>
                   
                   <div className="flex items-center justify-between mt-4">
                     <div className="flex items-center border rounded-lg bg-gray-50">
                       <button 
                         onClick={() => updateQuantity(item._id, item.quantity - 1)}
-                        className="p-2 text-gray-500 hover:text-gray-700 hover:bg-gray-100 rounded-l-lg transition"
+                        className="inline-flex h-11 w-11 items-center justify-center text-gray-500"
+                        aria-label={`Fewer ${item.name}`}
                       >
                         <Minus size={16} />
                       </button>
                       <span className="w-10 text-center font-medium text-gray-700">{item.quantity}</span>
                       <button 
                         onClick={() => updateQuantity(item._id, item.quantity + 1)}
-                        className="p-2 text-gray-500 hover:text-gray-700 hover:bg-gray-100 rounded-r-lg transition"
+                        className="inline-flex h-11 w-11 items-center justify-center text-gray-500"
+                        aria-label={`More ${item.name}`}
                       >
                         <Plus size={16} />
                       </button>
                     </div>
                     <button 
                       onClick={() => removeFromCart(item._id)}
-                      className="text-cyan-700 hover:text-cyan-800 p-2 hover:bg-cyan-50 rounded-lg transition"
-                      title="Remove item"
+                      className="inline-flex h-11 w-11 items-center justify-center rounded-[12px]"
+                      aria-label={`Remove ${item.name}`}
                     >
                       <Trash2 size={18} />
                     </button>
@@ -127,7 +129,7 @@ export default function CartPage() {
             
             <Link 
               href="/checkout"
-              className="flex w-full justify-center rounded-full bg-slate-900 py-3 px-4 text-lg font-bold text-white transition hover:bg-slate-800"
+              className="btn-primary w-full no-underline"
             >
               Checkout
             </Link>

@@ -19,6 +19,8 @@ interface CartStore {
   addToCart: (item: Omit<CartItem, "quantity"> & { quantity?: number }) => void;
   removeFromCart: (id: string) => void;
   updateQuantity: (id: string, quantity: number) => void;
+  priceVersion: number;
+  reprice: () => void;
   clearCart: () => void;
   totalItems: () => number;
   totalPrice: () => number;
@@ -51,6 +53,7 @@ export const useCartStore = create<CartStore>()(
   persist(
     (set, get) => ({
       items: [],
+      priceVersion: 0,
       addToCart: (item) => {
         const quantity = item.quantity && item.quantity > 0 ? Math.floor(item.quantity) : 1;
         const currentItems = get().items;
@@ -89,6 +92,11 @@ export const useCartStore = create<CartStore>()(
           ),
         });
       },
+      reprice: () =>
+        set({
+          items: withPrintPrices(get().items),
+          priceVersion: get().priceVersion + 1,
+        }),
       clearCart: () => set({ items: [] }),
       totalItems: () => get().items.reduce((total, item) => total + item.quantity, 0),
       totalPrice: () => get().items.reduce((total, item) => total + item.price * item.quantity, 0),

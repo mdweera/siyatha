@@ -5,17 +5,20 @@ import { useEffect, useState } from "react";
 import { usePathname } from "next/navigation";
 import { ShoppingCart } from "lucide-react";
 import { useCartStore } from "@/store/useCartStore";
-import { INITIAL_FREE_DELIVERY, quoteDelivery, type ShopDelivery } from "@/lib/delivery";
+import { INITIAL_DELIVERY_CHARGE, INITIAL_FREE_DELIVERY, quoteDelivery, type ShopDelivery } from "@/lib/delivery";
 import { formatRs } from "@/lib/storefront";
+import { useLang } from "@/components/LanguageProvider";
+import { t } from "@/lib/i18n";
 
 export default function OrderBar() {
   const pathname = usePathname();
+  const copy = t(useLang()).bar;
   const items = useCartStore((state) => state.items);
   const subtotal = useCartStore((state) => state.totalPrice());
   const [mounted, setMounted] = useState(false);
   const [settings, setSettings] = useState<ShopDelivery>({
     freeDeliveryAbove: INITIAL_FREE_DELIVERY,
-    deliveryCharge: 0,
+    deliveryCharge: INITIAL_DELIVERY_CHARGE,
   });
 
   useEffect(() => {
@@ -47,32 +50,32 @@ export default function OrderBar() {
       <div className="mx-auto flex w-full max-w-7xl items-center gap-3 py-2.5 pl-16 pr-4">
         <div className="min-w-0 flex-1">
           <p className="truncate text-sm font-semibold text-slate-800">
-            {count === 0 ? "Cart" : `${count} item${count === 1 ? "" : "s"}`}
+            {count === 0 ? copy.cart : `${count} ${count === 1 ? copy.item : copy.items}`}
             <span className="ml-2 font-display text-lg font-black text-slate-900">{formatRs(quote.total)}</span>
           </p>
           <p className="truncate text-xs font-semibold text-[#B10C53]">
             {quote.qualifies
-              ? "Free delivery"
+              ? copy.free
               : quote.threshold > 0
-                ? `Add ${formatRs(quote.remaining)} for free delivery`
-                : "Delivery added at checkout"}
+                ? `${copy.add} ${formatRs(quote.remaining)} ${copy.forFree}`.trim()
+                : copy.later}
           </p>
-          <div className="mt-1.5 h-1.5 overflow-hidden rounded-full bg-[#F9E094]/70">
-            <div className="h-full rounded-full bg-[#00a36a]" style={{ width: `${quote.qualifies ? 100 : progress}%` }} />
+          <div className="mt-1.5 h-1.5 overflow-hidden rounded-full bg-[#F9E094]">
+            <div className="h-full rounded-full bg-[#F2B400]" style={{ width: `${quote.qualifies ? 100 : progress}%` }} />
           </div>
         </div>
         <div className="flex shrink-0 gap-2">
           {pathname !== "/cart" ? (
-            <Link href="/cart" className="inline-flex items-center gap-2 rounded-full border border-slate-200 px-4 py-2 text-sm font-semibold text-slate-800">
-              <ShoppingCart size={16} /> Cart
+            <Link href="/cart" className="inline-flex min-h-11 items-center gap-2 rounded-full border border-[#CD7DA2]/50 bg-white px-4 py-2 text-sm font-semibold text-[#2b1636] no-underline" aria-label={copy.cart}>
+              <ShoppingCart size={16} /> {copy.cart}
             </Link>
           ) : null}
           {!onCheckout ? (
             <Link
               href={count > 0 ? "/checkout" : "/photo-prints/order"}
-              className="inline-flex items-center rounded-full bg-slate-900 px-4 py-2 text-sm font-bold text-white"
+              className="inline-flex min-h-11 items-center rounded-full bg-[#F2B400] px-4 py-2 text-sm font-bold text-[#2b1636] no-underline"
             >
-              {count > 0 ? "Checkout" : "Upload photos"}
+              {count > 0 ? copy.checkout : copy.upload}
             </Link>
           ) : null}
         </div>

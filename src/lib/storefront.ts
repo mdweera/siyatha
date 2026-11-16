@@ -278,8 +278,99 @@ export function inferDepartment(product: MatchableProduct): DepartmentId | "all"
   return "all";
 }
 
-export function sizesForFamily(family: PrintFamilyId): PrintSize[] {
-  return PRINT_SIZES.filter((size) => size.family === family);
+export type PrintPriceTable = {
+  prices: Record<string, number>;
+  bulk12Copies: number;
+  bulk12Percent: number;
+  bulk30Copies: number;
+  bulk30Percent: number;
+};
+
+export function defaultPrintPriceTable(): PrintPriceTable {
+  return {
+    prices: Object.fromEntries(PRINT_SIZES.map((size) => [size.id, size.price])),
+    bulk12Copies: 12,
+    bulk12Percent: 10,
+    bulk30Copies: 30,
+    bulk30Percent: 20,
+  };
+}
+
+export function printTableFromRecord(raw: unknown): PrintPriceTable {
+  const table = defaultPrintPriceTable();
+  if (!raw || typeof raw !== "object") {
+    return table;
+  }
+
+  const record = raw as Record<string, unknown>;
+  PRINT_SIZES.forEach((size) => {
+    const value = Number(record[size.id]);
+    if (Number.isFinite(value) && value >= 0) {
+      table.prices[size.id] = value;
+    }
+  });
+
+  const bulk12Copies = Number(record.bulk12Copies);
+  const bulk12Percent = Number(record.bulk12Percent);
+  const bulk30Copies = Number(record.bulk30Copies);
+  const bulk30Percent = Number(record.bulk30Percent);
+  if (Number.isFinite(bulk12Copies) && bulk12Copies > 0) {
+    table.bulk12Copies = Math.floor(bulk12Copies);
+  }
+  if (Number.isFinite(bulk12Percent) && bulk12Percent >= 0 && bulk12Percent < 100) {
+    table.bulk12Percent = bulk12Percent;
+  }
+  if (Number.isFinite(bulk30Copies) && bulk30Copies > 0) {
+    table.bulk30Copies = Math.floor(bulk30Copies);
+  }
+  if (Number.isFinite(bulk30Percent) && bulk30Percent >= 0 && bulk30Percent < 100) {
+    table.bulk30Percent = bulk30Percent;
+  }
+
+  return table;
+}
+
+export function printFaqs(table: PrintPriceTable = defaultPrintPriceTable()) {
+  const start = table.prices["4x6"] ?? 30;
+  const [first, ...rest] = PRINT_FAQS;
+  return [
+    {
+      ...first,
+      answer: `A 4×6 photo print at Siyatha starts at Rs ${start}. The price on the order page updates when you choose the size and the number of copies. ${table.bulk12Copies} or more of the same size are ${table.bulk12Percent}% less, and ${table.bulk30Copies} or more are ${table.bulk30Percent}% less. Passport sheets stay at the sheet price.`,
+    },
+    ...rest,
+  ];
+}
+
+export function printTableToRecord(table: PrintPriceTable): Record<string, number> {
+  return {
+    ...table.prices,
+    bulk12Copies: table.bulk12Copies,
+    bulk12Percent: table.bulk12Percent,
+    bulk30Copies: table.bulk30Copies,
+    bulk30Percent: table.bulk30Percent,
+  };
+}
+
+let clientPrintPrices: PrintPriceTable | null = null;
+
+export function setClientPrintPrices(table: PrintPriceTable) {
+  clientPrintPrices = table;
+}
+
+export function currentPrintPrices(): PrintPriceTable {
+  return clientPrintPrices ?? defaultPrintPriceTable();
+}
+
+export function pricedPrintSizes(table: PrintPriceTable = currentPrintPrices()): PrintSize[] {
+  return PRINT_SIZES.map((size) => ({
+    ...size,
+    price: table.prices[size.id] ?? size.price,
+  }));
+}
+
+export function sizesForFamily(family: PrintFamilyId, sizes: PrintSize[] = PRINT_SIZES): PrintSize[] {
+  return sizes.filter((size) => size.family === family);
 }
 
 export function findPrintSize(sizeId: string): PrintSize | undefined {
@@ -294,35 +385,82 @@ export function familyFromSize(sizeId: string): PrintFamilyId {
   return findPrintSize(sizeId)?.family ?? "copies";
 }
 
-export function lowestFamilyPrice(family: PrintFamilyId): number {
-  const prices = sizesForFamily(family).map((size) => size.price);
+export function lowestFamilyPrice(family: PrintFamilyId, sizes: PrintSize[] = PRINT_SIZES): number {
+  const prices = sizesForFamily(family, sizes).map((size) => size.price);
   return prices.length > 0 ? Math.min(...prices) : 0;
 }
 
-export function bulkMultiplier(family: PrintFamilyId, copies: number): number {
+export function bulkMultiplier(
+  family: PrintFamilyId,
+  copies: number,
+  table: PrintPriceTable = currentPrintPrices()
+): number {
   if (family === "passport") {
     return 1;
   }
 
-  if (copies >= 30) {
-    return 0.8;
-  }
+  const tiers = [
+    { copies: table.bulk30Copies, percent: table.bulk30Percent },
+    { copies: table.bulk12Copies, percent: table.bulk12Percent },
+  ].sort((left, right) => right.copies - left.copies);
 
-  if (copies >= 12) {
-    return 0.9;
+  for (const tier of tiers) {
+    if (copies >= tier.copies) {
+      return 1 - tier.percent / 100;
+    }
   }
 
   return 1;
 }
 
-export function printUnitPrice(sizeId: string, copies: number): number | null {
+export function printUnitPrice(
+  sizeId: string,
+  copies: number,
+  table: PrintPriceTable = currentPrintPrices()
+): number | null {
   const size = findPrintSize(sizeId);
   if (!size) {
     return null;
   }
 
+  const listPrice = table.prices[size.id] ?? size.price;
   const safeCopies = Number.isFinite(copies) && copies > 0 ? Math.floor(copies) : 1;
-  return Math.max(1, Math.round(size.price * bulkMultiplier(size.family, safeCopies)));
+  return Math.max(0, Math.round(listPrice * bulkMultiplier(size.family, safeCopies, table)));
+}
+
+export function parsePixelHint(pixels: string): { width: number; height: number } | null {
+  const match = pixels.match(/(\d+)\s*[×x]\s*(\d+)/i);
+  if (!match) {
+    return null;
+  }
+  return { width: Number(match[1]), height: Number(match[2]) };
+}
+
+export function printAspect(size: PrintSize): { width: number; height: number } {
+  const match = size.cm.match(/(\d+(?:\.\d+)?)\s*[×x]\s*(\d+(?:\.\d+)?)/i);
+  if (!match) {
+    return { width: 2, height: 3 };
+  }
+  return { width: Number(match[1]), height: Number(match[2]) };
+}
+
+export function photoQuality(
+  fileWidth: number,
+  fileHeight: number,
+  targetWidth: number,
+  targetHeight: number
+): "good" | "soft" | "small" {
+  if (fileWidth <= 0 || fileHeight <= 0 || targetWidth <= 0 || targetHeight <= 0) {
+    return "soft";
+  }
+  const cover = Math.min(fileWidth / targetWidth, fileHeight / targetHeight);
+  if (cover >= 0.85) {
+    return "good";
+  }
+  if (cover >= 0.5) {
+    return "soft";
+  }
+  return "small";
 }
 
 export function formatRs(value: number): string {

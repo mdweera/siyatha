@@ -1,9 +1,12 @@
 "use client";
 
 import { MessageCircle, X } from "lucide-react";
+import { usePathname } from "next/navigation";
 import { useEffect, useMemo, useRef, useState } from "react";
+import { trackEvent } from "@/lib/analytics";
 
 export default function WhatsAppButton() {
+  const pathname = usePathname();
   const [open, setOpen] = useState(false);
   const [draftMessage, setDraftMessage] = useState("");
   const textareaRef = useRef<HTMLTextAreaElement | null>(null);
@@ -20,9 +23,14 @@ export default function WhatsAppButton() {
 
   const openWhatsApp = (message?: string) => {
     const finalMessage = (message ?? draftMessage ?? "").trim() || defaultMessage;
+    trackEvent("whatsapp_click", { place: "floating-button" });
     const url = `https://wa.me/${formattedPhone}?text=${encodeURIComponent(finalMessage)}`;
     window.open(url, "_blank", "noopener,noreferrer");
   };
+
+  if (pathname.startsWith("/photo-prints/order") || pathname.startsWith("/admin")) {
+    return null;
+  }
 
   const handleSend = () => {
     openWhatsApp(draftMessage);
@@ -36,7 +44,7 @@ export default function WhatsAppButton() {
           <div className="overflow-hidden rounded-3xl border border-slate-200 bg-white shadow-2xl shadow-slate-200/70">
             <div className="flex items-center justify-between gap-3 border-b border-slate-100 px-5 py-4">
               <div className="flex items-center gap-3">
-                <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-emerald-50 text-emerald-600">
+                <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-[#25D366] text-white">
                   <MessageCircle size={20} />
                 </div>
                 <div>
@@ -62,13 +70,13 @@ export default function WhatsAppButton() {
                 onChange={(e) => setDraftMessage(e.target.value)}
                 placeholder="Type your message here..."
                 rows={3}
-                className="w-full resize-none rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm text-slate-900 outline-none transition focus:border-emerald-400 focus:ring-4 focus:ring-emerald-100"
+                className="w-full resize-none rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm text-slate-900 outline-none transition focus:border-[#25D366] focus:ring-4 focus:ring-[#25D366]/20"
               />
 
               <button
                 type="button"
                 onClick={handleSend}
-                className="w-full rounded-2xl bg-slate-900 px-4 py-3 text-sm font-semibold text-white transition hover:bg-slate-800"
+                className="w-full rounded-2xl bg-[#25D366] px-4 py-3 text-sm font-semibold text-white transition hover:bg-[#1ebe5d]"
               >
                 Send
               </button>
@@ -79,7 +87,7 @@ export default function WhatsAppButton() {
                   openWhatsApp();
                   setOpen(false);
                 }}
-                className="w-full rounded-2xl bg-gradient-to-br from-emerald-500 to-green-600 px-4 py-3 text-sm font-semibold text-white shadow-lg shadow-emerald-300/60 transition hover:brightness-105"
+                className="w-full rounded-2xl border border-[#128C7E] bg-white px-4 py-3 text-sm font-semibold text-[#128C7E] transition hover:bg-[#25D366]/10"
               >
                 Contact on WhatsApp
               </button>
@@ -91,10 +99,10 @@ export default function WhatsAppButton() {
       <button
         type="button"
         onClick={() => setOpen((prev) => !prev)}
-        className="fixed bottom-2.5 left-3 z-50 flex h-11 w-11 items-center justify-center rounded-full bg-gradient-to-br from-emerald-500 to-green-600 text-white shadow-lg shadow-emerald-300/50 transition-transform hover:scale-105"
+        className="fixed bottom-2.5 left-3 z-50 flex h-12 w-12 items-center justify-center rounded-full bg-[#25D366] text-white shadow-lg shadow-[#25D366]/40"
         aria-label={open ? "Close chat" : "Open chat"}
       >
-        <span className="absolute inset-0 rounded-full border border-emerald-300/60 animate-ping" />
+        <span className="absolute inset-0 rounded-full border border-[#25D366]/50 animate-ping" />
         <MessageCircle size={22} />
       </button>
     </>

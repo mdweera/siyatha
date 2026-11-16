@@ -414,7 +414,7 @@ export default function SingleProductClient({ product, relatedProducts = [] }: S
             <button
               type="button"
               onClick={handleAddToCart}
-              className="inline-flex flex-1 items-center justify-center gap-2 rounded-full bg-gradient-to-r from-cyan-600 to-sky-600 px-6 py-3 text-sm font-semibold text-white shadow-lg shadow-cyan-200 transition hover:brightness-105"
+              className="btn-primary flex-1"
             >
               <ShoppingCart size={18} />
               Add to cart
@@ -423,7 +423,7 @@ export default function SingleProductClient({ product, relatedProducts = [] }: S
             <button
               type="button"
               onClick={handleBuyNow}
-              className="inline-flex items-center justify-center rounded-full border border-cyan-200 bg-white px-5 py-3 text-sm font-semibold text-cyan-700 transition hover:bg-cyan-50"
+              className="btn-secondary"
             >
               Buy now
             </button>
@@ -441,7 +441,7 @@ export default function SingleProductClient({ product, relatedProducts = [] }: S
             <button
               type="button"
               onClick={handleWhatsAppOrderClick}
-              className="inline-flex items-center gap-2 rounded-full border border-emerald-200 bg-emerald-50 px-4 py-2 text-sm font-medium text-emerald-700 transition hover:bg-emerald-100"
+              className="btn-whatsapp px-4 py-2 text-sm"
             >
               <MessageCircle size={16} /> Order via WhatsApp
             </button>
@@ -663,7 +663,7 @@ export default function SingleProductClient({ product, relatedProducts = [] }: S
                 </button>
                 <button
                   type="submit"
-                  className="inline-flex items-center gap-2 rounded-full bg-emerald-600 px-4 py-2 text-sm font-semibold text-white transition hover:bg-emerald-700"
+                  className="btn-whatsapp px-4 py-2 text-sm"
                 >
                   <MessageCircle size={15} /> Continue to WhatsApp
                 </button>

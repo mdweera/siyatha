@@ -1,7 +1,12 @@
 import { NextResponse } from "next/server";
-import { getShopDelivery } from "@/lib/shopDelivery";
+import { printTableToRecord } from "@/lib/storefront";
+import { getShopSettings } from "@/lib/shopDelivery";
 
 export async function GET() {
-  const delivery = await getShopDelivery();
-  return NextResponse.json(delivery);
+  const settings = await getShopSettings();
+  return NextResponse.json({
+    freeDeliveryAbove: settings.freeDeliveryAbove,
+    deliveryCharge: settings.deliveryCharge,
+    printPrices: printTableToRecord(settings.printPrices),
+  });
 }

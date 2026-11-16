@@ -1,4 +1,5 @@
 export const INITIAL_FREE_DELIVERY = 1000;
+export const INITIAL_DELIVERY_CHARGE = 300;
 
 export type ShopDelivery = {
   freeDeliveryAbove: number;

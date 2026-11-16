@@ -1,7 +1,7 @@
 "use client";
 
 import { useCartStore } from "@/store/useCartStore";
-import { INITIAL_FREE_DELIVERY, quoteDelivery, type ShopDelivery } from "@/lib/delivery";
+import { INITIAL_DELIVERY_CHARGE, INITIAL_FREE_DELIVERY, quoteDelivery, type ShopDelivery } from "@/lib/delivery";
 import { formatRs } from "@/lib/storefront";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
@@ -9,6 +9,7 @@ import { useEffect, useState } from "react";
 import { ArrowLeft, CreditCard, Truck, MapPin, PhoneCall } from "lucide-react";
 import Link from "next/link";
 import toast from "react-hot-toast";
+import { trackEvent } from "@/lib/analytics";
 
 interface ShippingForm {
   firstName: string;
@@ -28,9 +29,11 @@ export default function CheckoutPage() {
   const orderPhone = "+94 76 660 9143";
   const telHref = `tel:${orderPhone.replace(/\s+/g, "")}`;
   const [loading, setLoading] = useState(false);
+  const [paymentMethod, setPaymentMethod] = useState("cash_on_delivery");
+  const [formError, setFormError] = useState("");
   const [delivery, setDelivery] = useState<ShopDelivery>({
     freeDeliveryAbove: INITIAL_FREE_DELIVERY,
-    deliveryCharge: 0,
+    deliveryCharge: INITIAL_DELIVERY_CHARGE,
   });
   const [shippingForm, setShippingForm] = useState<ShippingForm>({
     firstName: "",
@@ -65,16 +68,16 @@ export default function CheckoutPage() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!session) {
-      toast.error("Please login to place an order");
-      router.push("/login");
+    const phoneOk = /^(?:\+94|0)7\d{8}$/.test(shippingForm.phone.replace(/\s+/g, ""));
+    if (!phoneOk) {
+      setFormError("Use a Sri Lankan mobile number, like 076 660 9143.");
       return;
     }
-
+    setFormError("");
     setLoading(true);
+    trackEvent("checkout_started", { paymentMethod, total: quote.total });
     try {
       const orderData = {
-        userId: session.user.id,
         items: items.map((item) => ({
           productId: item.kind === "print" ? undefined : item._id,
           kind: item.kind || "product",
@@ -86,10 +89,13 @@ export default function CheckoutPage() {
           image: item.image,
           detail: item.detail,
         })),
-        shippingAddress: shippingForm,
+        shippingAddress: {
+          ...shippingForm,
+          postalCode: shippingForm.postalCode.trim() || "-",
+        },
         totalAmount: quote.total,
         status: "pending",
-        paymentMethod: "cash_on_delivery", // For now, mock payment
+        paymentMethod,
       };
 
       const response = await fetch("/api/orders", {
@@ -98,14 +104,18 @@ export default function CheckoutPage() {
         body: JSON.stringify(orderData),
       });
 
-      if (!response.ok) throw new Error("Failed to place order");
+      if (!response.ok) {
+        const payload = await response.json().catch(() => null);
+        throw new Error(payload?.error || "Failed to place order");
+      }
 
       const order = await response.json();
       clearCart();
+      trackEvent("order_completed", { paymentMethod, total: quote.total });
       toast.success("Order placed successfully!");
       router.push(`/order-confirmation/${order._id}`);
     } catch (error) {
-      toast.error("Failed to place order. Please try again.");
+      toast.error(error instanceof Error ? error.message : "Failed to place order. Please try again.");
       console.error(error);
     } finally {
       setLoading(false);
@@ -117,7 +127,7 @@ export default function CheckoutPage() {
       <div className="container mx-auto py-24 text-center">
         <h1 className="text-3xl font-bold text-gray-900 mb-4">Your cart is empty</h1>
         <p className="text-gray-600 mb-8">Add some products to your cart before checking out.</p>
-        <Link href="/shop" className="text-blue-600 font-semibold hover:underline">← Back to Shop</Link>
+        <Link href="/shop" className="text-[#681878] font-semibold hover:underline">← Back to Shop</Link>
       </div>
     );
   }
@@ -125,12 +135,15 @@ export default function CheckoutPage() {
   return (
     <div className="container mx-auto py-12 px-4 max-w-6xl">
       <div className="mb-8">
-        <Link href="/cart" className="inline-flex items-center gap-2 text-gray-500 hover:text-blue-600 font-medium">
+        <Link href="/cart" className="inline-flex items-center gap-2 text-gray-500 hover:text-[#681878] font-medium">
           <ArrowLeft size={16} /> Back to Cart
         </Link>
       </div>
 
-      <h1 className="mb-8 font-display text-4xl font-black text-slate-900">Checkout</h1>
+      <h1 className="font-display text-4xl font-black text-[var(--ink)]">Checkout</h1>
+      <p className="mb-8 mt-2 text-sm text-[var(--muted)]">
+        {session ? "This order is saved to your account." : "No account is needed. Cash on delivery and bank transfer are both accepted."}
+      </p>
       {items.some((item) => item.kind === "print") ? (
         <p className="mb-8 rounded-2xl border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-slate-700">
           Photo prints in this order use the pictures you uploaded. We message you on WhatsApp if a file needs a crop check before printing.
@@ -141,7 +154,7 @@ export default function CheckoutPage() {
         {/* Shipping Form */}
         <div className="bg-white rounded-2xl border shadow-sm p-8">
           <div className="flex items-center gap-3 mb-6">
-            <MapPin className="text-blue-600" size={24} />
+            <MapPin className="text-[#681878]" size={24} />
             <h2 className="text-2xl font-bold text-gray-900">Shipping Information</h2>
           </div>
 
@@ -155,7 +168,7 @@ export default function CheckoutPage() {
                   required
                   value={shippingForm.firstName}
                   onChange={handleInputChange}
-                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[var(--yellow)] focus:border-transparent"
                 />
               </div>
               <div>
@@ -166,7 +179,7 @@ export default function CheckoutPage() {
                   required
                   value={shippingForm.lastName}
                   onChange={handleInputChange}
-                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[var(--yellow)] focus:border-transparent"
                 />
               </div>
             </div>
@@ -179,7 +192,7 @@ export default function CheckoutPage() {
                 required
                 value={shippingForm.email}
                 onChange={handleInputChange}
-                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[var(--yellow)] focus:border-transparent"
               />
             </div>
 
@@ -189,9 +202,12 @@ export default function CheckoutPage() {
                 type="tel"
                 name="phone"
                 required
+                inputMode="tel"
+                autoComplete="tel"
+                aria-invalid={formError ? true : undefined}
                 value={shippingForm.phone}
                 onChange={handleInputChange}
-                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[var(--yellow)] focus:border-transparent"
               />
             </div>
 
@@ -203,7 +219,7 @@ export default function CheckoutPage() {
                 rows={3}
                 value={shippingForm.address}
                 onChange={handleInputChange}
-                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[var(--yellow)] focus:border-transparent"
                 placeholder="Street address, apartment, etc."
               />
             </div>
@@ -217,18 +233,17 @@ export default function CheckoutPage() {
                   required
                   value={shippingForm.city}
                   onChange={handleInputChange}
-                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[var(--yellow)] focus:border-transparent"
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">Postal Code</label>
+                <label className="block text-sm font-medium text-gray-700 mb-2">Postal code, if you have one</label>
                 <input
                   type="text"
                   name="postalCode"
-                  required
                   value={shippingForm.postalCode}
                   onChange={handleInputChange}
-                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[var(--yellow)] focus:border-transparent"
                 />
               </div>
             </div>
@@ -240,15 +255,31 @@ export default function CheckoutPage() {
                 rows={2}
                 value={shippingForm.notes}
                 onChange={handleInputChange}
-                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[var(--yellow)] focus:border-transparent"
                 placeholder="Any special instructions..."
               />
             </div>
 
+            <fieldset>
+              <legend className="mb-2 text-sm font-medium text-gray-700">Payment</legend>
+              <div className="grid gap-2 sm:grid-cols-2">
+                {[
+                  ["cash_on_delivery", "Cash on delivery"],
+                  ["bank_transfer", "Bank transfer"],
+                ].map(([value, label]) => (
+                  <label key={value} className="flex min-h-11 items-center gap-2 rounded-[12px] border border-[var(--line)] px-3">
+                    <input type="radio" name="paymentMethod" value={value} checked={paymentMethod === value} onChange={() => setPaymentMethod(value)} />
+                    {label}
+                  </label>
+                ))}
+              </div>
+            </fieldset>
+            {formError ? <p className="text-sm font-medium text-[var(--brand)]" role="alert">{formError}</p> : null}
+
             <button
               type="submit"
               disabled={loading}
-              className="flex w-full items-center justify-center gap-2 rounded-full bg-slate-900 py-4 text-lg font-bold text-white transition hover:bg-slate-800 disabled:cursor-not-allowed disabled:opacity-50"
+              className="btn-primary w-full disabled:cursor-not-allowed disabled:opacity-50"
             >
               {loading ? "Placing Order..." : "Place Order"}
             </button>
@@ -259,7 +290,7 @@ export default function CheckoutPage() {
         <div className="space-y-6">
           <div className="bg-white rounded-2xl border shadow-sm p-8">
             <div className="flex items-center gap-3 mb-6">
-              <CreditCard className="text-blue-600" size={24} />
+              <CreditCard className="text-[#681878]" size={24} />
               <h2 className="text-2xl font-bold text-gray-900">Order Summary</h2>
             </div>
 
@@ -299,28 +330,28 @@ export default function CheckoutPage() {
             </div>
           </div>
 
-          <div className="bg-blue-50 rounded-2xl p-6 border border-blue-200">
+          <div className="rounded-2xl border border-[var(--line)] bg-[var(--yellow-tint)] p-6">
             <div className="flex items-center gap-3 mb-4">
-              <Truck className="text-blue-600" size={24} />
-              <h3 className="font-bold text-blue-900">Delivery Information</h3>
+              <Truck className="text-[#681878]" size={24} />
+              <h3 className="font-bold text-[var(--ink)]">Delivery Information</h3>
             </div>
-            <p className="text-blue-800 text-sm">
+            <p className="text-sm text-[var(--ink)]">
               Photo prints ship within one business day. Packaging and craft items go out with the same order.
               {quote.threshold > 0 ? ` Free delivery starts at ${formatRs(quote.threshold)}.` : ""}
             </p>
           </div>
 
-          <div className="bg-cyan-50 rounded-2xl p-6 border border-cyan-200">
+          <div className="rounded-2xl border border-[var(--line)] bg-white p-6">
             <div className="flex items-center gap-3 mb-4">
-              <PhoneCall className="text-cyan-700" size={24} />
-              <h3 className="font-bold text-cyan-900">Prefer to Order by Phone?</h3>
+              <PhoneCall className="text-[#128C7E]" size={24} />
+              <h3 className="font-bold text-[var(--ink)]">Prefer to order by phone?</h3>
             </div>
-            <p className="text-cyan-800 text-sm mb-4">
-              Call our team and place your order directly with assisted checkout.
+            <p className="mb-4 text-sm text-[var(--muted)]">
+              Call the shop and we will take the order with you.
             </p>
             <a
               href={telHref}
-              className="inline-flex items-center gap-2 rounded-lg bg-cyan-700 px-4 py-2 text-sm font-semibold text-white transition hover:bg-cyan-800"
+              className="btn-whatsapp"
             >
               <PhoneCall size={16} /> Call {orderPhone}
             </a>

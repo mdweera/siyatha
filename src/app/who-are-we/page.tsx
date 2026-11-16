@@ -3,19 +3,20 @@ import Link from "next/link";
 import { ArrowRight, BadgeCheck, Clock3, MapPin, PhoneCall } from "lucide-react";
 
 export const metadata = {
-  title: "Who Are We | Siyatha Online",
-  description: "Siyatha Online prints photos, packs parcels for online sellers, and stocks craft materials from Kirimatiya, Batapola, Ambalangoda.",
+  title: "Who we are",
+  description: "Siyatha prints photos, sells packaging for online sellers, and stocks craft materials in Kirimatiya, Batapola.",
+  alternates: { canonical: "/who-are-we", languages: { en: "/who-are-we?lang=en", si: "/who-are-we?lang=si" } },
 };
 
 export default function WhoAreWePage() {
   const values = [
     {
       title: "Fair Pricing",
-      text: "සෑමවිටම හොඳම මිල ඔබට. We keep pricing transparent and competitive.",
+      text: "සෑමවිටම හොඳම මිල ඔබට. Prices stay on the page, and photo print prices can be checked before you upload.",
     },
     {
       title: "Trusted Support",
-      text: "Purchase එකෙන් පසුවත් direct phone සහ WhatsApp support අපෙන් ලැබේ.",
+      text: "Phone and WhatsApp support stays with you after the purchase.",
     },
     {
       title: "Curated Products",
@@ -25,28 +26,24 @@ export default function WhoAreWePage() {
 
   return (
     <div className="relative flex-grow overflow-hidden px-4 py-10 sm:px-6 lg:px-8">
-      <div className="hero-orb left-[-80px] top-20 h-52 w-52 bg-cyan-300" />
-      <div className="hero-orb right-[-90px] top-0 h-64 w-64 bg-emerald-300" />
-
       <div className="relative mx-auto w-full max-w-7xl space-y-8">
-        <section className="overflow-hidden rounded-[2rem] bg-gradient-to-br from-[#1a2b4a] via-sky-700 to-cyan-600 px-6 py-8 text-white sm:px-9 sm:py-10">
+        <section className="overflow-hidden rounded-[2rem] bg-gradient-to-br from-[#DE2684] via-[#F2B400] to-[#F9E094] px-6 py-8 text-[#2b1636] sm:px-9 sm:py-10">
           <div className="grid gap-8 lg:grid-cols-[1.2fr_1fr] lg:items-center">
             <div>
-              <p className="inline-flex items-center gap-2 rounded-full border border-white/30 bg-white/10 px-3 py-1 text-xs font-semibold uppercase tracking-[0.16em]">
+              <p className="inline-flex items-center gap-2 rounded-full border border-[#2b1636]/20 bg-white/50 px-3 py-1 text-xs font-semibold uppercase tracking-[0.16em]">
                 <BadgeCheck size={14} /> About Siyatha Online
               </p>
               <h1 className="mt-4 font-display text-3xl font-bold leading-tight sm:text-4xl lg:text-5xl">
-                අපි කවුද?
-                <span className="mt-2 block text-emerald-200">Who We Are</span>
+                Who we are
               </h1>
-              <p className="mt-4 max-w-2xl text-sm leading-7 text-slate-100 sm:text-base">
+              <p className="mt-4 max-w-2xl text-sm leading-7 text-[#2b1636] sm:text-base">
                 Siyatha Online prints photos you upload, packs parcels for people who sell online, and stocks craft materials
                 for sewing, paper, and glue. We work from Kirimatiya, Batapola, and send orders across Sri Lanka.
               </p>
               <div className="mt-6 flex flex-wrap gap-3">
                 <Link
                   href="/shop"
-                  className="inline-flex items-center gap-2 rounded-full bg-white px-6 py-3 text-sm font-bold text-cyan-800 transition hover:bg-cyan-50"
+                  className="btn-primary no-underline"
                 >
                   Shop Now <ArrowRight size={16} />
                 </Link>
@@ -54,7 +51,7 @@ export default function WhoAreWePage() {
                   href="https://www.facebook.com/profile.php?id=61587396941428"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="inline-flex items-center rounded-full border border-white/35 bg-white/10 px-6 py-3 text-sm font-semibold text-white transition hover:bg-white/20"
+                  className="btn-secondary no-underline"
                 >
                   Facebook Page
                 </a>

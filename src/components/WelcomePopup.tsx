@@ -4,29 +4,21 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { Sparkles, X, ArrowRight } from "lucide-react";
+import { useLang } from "@/components/LanguageProvider";
 
 const SESSION_KEY = "siyatha-welcome-popup-shown";
 const DISMISS_KEY = "siyatha-welcome-popup-dismissed-at";
 const SHOW_DELAY_MS = 12000;
 const DISMISS_COOLDOWN_MS = 12 * 60 * 60 * 1000;
 
-type LanguageMode = "mix" | "en";
-
 export default function WelcomePopup() {
   const pathname = usePathname();
+  const lang = useLang();
   const [isOpen, setIsOpen] = useState(false);
-  const [langMode, setLangMode] = useState<LanguageMode>("mix");
 
-  const t = (mixText: string, enText: string) => (langMode === "en" ? enText : mixText);
+  const t = (siText: string, enText: string) => (lang === "si" ? siText : enText);
 
   useEffect(() => {
-    const readLanguage = () => {
-      const params = new URLSearchParams(window.location.search);
-      setLangMode(params.get("lang") === "en" ? "en" : "mix");
-    };
-
-    readLanguage();
-
     if (pathname.startsWith("/admin") || pathname.startsWith("/login")) {
       return;
     }
@@ -106,7 +98,7 @@ export default function WelcomePopup() {
           <Link
             href="/photo-prints"
             onClick={handleClose}
-            className="inline-flex items-center gap-2 rounded-full bg-gradient-to-r from-cyan-600 to-sky-600 px-5 py-2.5 text-sm font-semibold text-white shadow-lg shadow-cyan-200 transition hover:brightness-105"
+            className="btn-primary no-underline"
           >
             {t("Photo prints", "Photo prints")} <ArrowRight size={16} />
           </Link>

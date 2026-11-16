@@ -8,6 +8,7 @@ src/app/photo-prints/ print landing (SEO)
 src/app/photo-prints/order/ upload studio
 src/app/packaging/ src/app/craft/ department pages
 src/app/shop/ full catalog, dept=packaging|craft
+src/app/{shipping,returns,privacy,terms}/ policy pages
 src/app/api/photo-prints/upload/ saved under public/uploads/prints
 src/lib/storefront.ts prices, pixel hints, keywords, FAQ
 src/components/photo-prints/PrintStudio.tsx

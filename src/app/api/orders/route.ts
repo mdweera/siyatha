@@ -7,7 +7,7 @@ import UserTrackingEvent from "@/models/UserTrackingEvent";
 import { authOptions } from "@/lib/auth";
 import { findFinish, findPrintSize, printUnitPrice } from "@/lib/storefront";
 import { quoteDelivery } from "@/lib/delivery";
-import { getShopDelivery } from "@/lib/shopDelivery";
+import { getShopSettings } from "@/lib/shopDelivery";
 
 type CheckoutItemInput = {
   productId?: string;
@@ -29,18 +29,38 @@ function toPositiveInt(value: unknown, fallback = 1) {
 export async function POST(request: NextRequest) {
   try {
     const session = await getServerSession(authOptions);
-    if (!session?.user?.id) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-    }
 
     await dbConnect();
     const orderData = await request.json();
 
-    // Validate required fields
-    const { items, shippingAddress, totalAmount, paymentMethod } = orderData;
-    if (!items || !shippingAddress || !totalAmount || !paymentMethod) {
+    const { items, shippingAddress, paymentMethod } = orderData;
+    const phone = String(shippingAddress?.phone || "").replace(/\s+/g, "");
+    const email = String(shippingAddress?.email || "").trim();
+    const firstName = String(shippingAddress?.firstName || "").trim();
+    const lastName = String(shippingAddress?.lastName || "").trim();
+    const address = String(shippingAddress?.address || "").trim();
+    const city = String(shippingAddress?.city || "").trim();
+    if (!items || !shippingAddress || !firstName || !address || !city || !email) {
       return NextResponse.json({ error: "Missing required fields" }, { status: 400 });
     }
+    if (!/^(?:\+94|0)7\d{8}$/.test(phone)) {
+      return NextResponse.json({ error: "Use a Sri Lankan mobile number." }, { status: 400 });
+    }
+    if (paymentMethod !== "cash_on_delivery" && paymentMethod !== "bank_transfer") {
+      return NextResponse.json({ error: "Choose cash on delivery or bank transfer." }, { status: 400 });
+    }
+
+    const safeAddress = {
+      ...shippingAddress,
+      firstName,
+      lastName,
+      email,
+      phone,
+      address,
+      city,
+      postalCode: String(shippingAddress?.postalCode || "").trim() || "-",
+      notes: String(shippingAddress?.notes || ""),
+    };
 
     const normalizedItems: CheckoutItemInput[] = (Array.isArray(items) ? items : [])
       .map((item: any) => ({
@@ -97,6 +117,8 @@ export async function POST(request: NextRequest) {
       }
     }
 
+    const shop = await getShopSettings();
+
     const orderItems = [
       ...productItems.map((item) => {
         const product = productMap.get(item.productId || "");
@@ -116,7 +138,7 @@ export async function POST(request: NextRequest) {
         const size = findPrintSize(item.sizeId || "");
         const finish = findFinish(item.finishId || "") || findFinish("lustre");
         const copies = printCopies.get(`${item.sizeId}|${item.finishId || "lustre"}`) || item.quantity;
-        const price = printUnitPrice(item.sizeId || "", copies) || 0;
+        const price = printUnitPrice(item.sizeId || "", copies, shop.printPrices) || 0;
         return {
           name: item.name || `${size?.label || "Photo"} print · ${finish?.title || "Lustre"}`,
           quantity: item.quantity,
@@ -130,18 +152,20 @@ export async function POST(request: NextRequest) {
     ];
 
     const computedTotal = orderItems.reduce((sum, item) => sum + item.subtotal, 0);
-    const deliveryQuote = quoteDelivery(computedTotal, await getShopDelivery());
+    const deliveryQuote = quoteDelivery(computedTotal, shop);
 
     // Create order
     const order = new Order({
-      userId: session.user.id,
+      userId: session?.user?.id,
+      customerName: `${firstName} ${lastName}`.trim(),
+      phone,
       items: orderItems,
-      shippingAddress,
+      shippingAddress: safeAddress,
       deliveryCharge: deliveryQuote.charge,
       totalAmount: deliveryQuote.total,
       paymentMethod,
       status: "pending",
-      orderNumber: `SO-${Date.now()}`, // Simple order number generation
+      orderNumber: `SO-${Date.now()}`,
     });
 
     await order.save();
@@ -158,10 +182,10 @@ export async function POST(request: NextRequest) {
     }
 
     await UserTrackingEvent.create({
-      visitorId: session.user.id,
+      visitorId: session?.user?.id || phone,
       sessionId: `checkout_${Date.now()}`,
-      userId: session.user.id,
-      userRole: session.user.role,
+      userId: session?.user?.id,
+      userRole: session?.user?.role || "guest",
       eventName: "order_placed",
       pageUrl: "/checkout",
       pageTitle: "Checkout",

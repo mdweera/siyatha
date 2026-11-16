@@ -2,7 +2,7 @@ import type { MetadataRoute } from "next";
 import { SITE_URL } from "@/lib/storefront";
 
 export default function sitemap(): MetadataRoute.Sitemap {
-  const paths = ["", "/photo-prints", "/photo-prints/order", "/packaging", "/craft", "/shop", "/who-are-we"];
+  const paths = ["", "/photo-prints", "/photo-prints/order", "/packaging", "/craft", "/shop", "/who-are-we", "/shipping", "/returns", "/privacy", "/terms"];
 
   return paths.map((path) => ({
     url: `${SITE_URL}${path || "/"}`,

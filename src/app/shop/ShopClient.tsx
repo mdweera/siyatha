@@ -14,7 +14,6 @@ import {
   Search,
   ShoppingBag,
   SlidersHorizontal,
-  Sparkles,
   Star,
   Tag,
   Wallet,
@@ -225,7 +224,10 @@ export default function ShopClient({
       const price = getProductPrice(product);
       const searchable = buildSearchSource(product);
       const matchesQuery = normalizedQuery.length === 0 || searchable.includes(normalizedQuery);
-      const matchesConcept = concept === "all" ? true : productMatchesDepartment(product, concept);
+      const inFocusedShelf =
+        productMatchesDepartment(product, "packaging") || productMatchesDepartment(product, "craft");
+      const matchesConcept =
+        concept === "all" ? normalizedQuery.length > 0 || inFocusedShelf : productMatchesDepartment(product, concept);
       const matchesStock = onlyInStock ? (product.stockQty ?? 0) > 0 : true;
       const matchesPrice = matchesPriceBucket(price, priceBucket);
       const matchesLevel = matchesValueLevel(price, valueLevel);
@@ -305,41 +307,14 @@ export default function ShopClient({
 
   return (
     <div className="space-y-8 pb-8">
-      <section className="relative overflow-hidden rounded-[2rem] border border-cyan-100 bg-[linear-gradient(120deg,#681878_0%,#B10C53_52%,#DE2684_100%)] p-6 text-white sm:p-8">
-        <div className="pointer-events-none absolute -right-16 -top-12 h-44 w-44 rounded-full bg-[#F9E094]/20 blur-2xl" />
-        <div className="pointer-events-none absolute -left-12 bottom-0 h-40 w-40 rounded-full bg-[#CD7DA2]/25 blur-2xl" />
-
-        <div className="relative z-10 grid gap-6 lg:grid-cols-[1fr_auto] lg:items-end">
-          <div>
-            <p className="inline-flex items-center gap-2 rounded-full border border-white/30 bg-white/10 px-3 py-1 text-[11px] font-bold uppercase tracking-[0.14em]">
-              <Sparkles size={14} /> Packaging and craft
-            </p>
-            <h1 className="mt-3 font-display text-3xl font-black leading-tight sm:text-4xl">
-              Shop packaging and craft materials
-            </h1>
-            <p className="mt-3 max-w-2xl text-sm text-cyan-100 sm:text-base">
-              Mailers, boxes, and tape for online sellers. Paper, glue, sewing, and ribbon for making at home.{" "}
-              <Link href="/photo-prints" className="font-semibold text-white underline">
-                Photo prints are ordered here.
-              </Link>
-            </p>
-          </div>
-
-          <div className="grid grid-cols-3 gap-3 text-center">
-            <div className="rounded-2xl border border-white/25 bg-white/10 px-3 py-2">
-              <p className="text-2xl font-black">{products.length}</p>
-              <p className="text-[11px] uppercase tracking-[0.12em] text-cyan-100">Products</p>
-            </div>
-            <div className="rounded-2xl border border-white/25 bg-white/10 px-3 py-2">
-              <p className="text-2xl font-black">2</p>
-              <p className="text-[11px] uppercase tracking-[0.12em] text-cyan-100">Departments</p>
-            </div>
-            <div className="rounded-2xl border border-white/25 bg-white/10 px-3 py-2">
-              <p className="text-2xl font-black">3</p>
-              <p className="text-[11px] uppercase tracking-[0.12em] text-cyan-100">Value Lanes</p>
-            </div>
-          </div>
-        </div>
+      <section className="surface-card p-6 sm:p-8">
+        <h1 className="text-3xl font-bold text-[var(--ink)] sm:text-4xl">Shop packaging and craft materials</h1>
+        <p className="mt-3 max-w-2xl text-sm leading-6 text-[var(--muted)] sm:text-base">
+          Mailers, boxes, and tape for online sellers. Paper, glue, sewing, and ribbon for making at home.{" "}
+          <Link href="/photo-prints" className="font-semibold underline">
+            Photo prints are ordered here.
+          </Link>
+        </p>
       </section>
 
       <section>
@@ -373,12 +348,8 @@ export default function ShopClient({
                     : "border-slate-200 bg-white hover:-translate-y-0.5 hover:border-cyan-200 hover:shadow-sm"
                 }`}
               >
-                <div className="relative aspect-[4/3]">
-                  <Image src={option.image} alt={option.title} fill className="object-cover" />
-                  <div className="absolute inset-0 bg-gradient-to-t from-slate-950/80 via-slate-950/40 to-transparent" />
-                  <div className="absolute left-3 top-3 rounded-full border border-white/40 bg-white/20 px-2.5 py-1 text-[11px] font-semibold text-white backdrop-blur">
-                    {count} items
-                  </div>
+                <div className="flex aspect-[4/3] items-end bg-[var(--yellow-tint)] p-4">
+                  <p className="text-sm font-semibold">{count > 0 ? `${count} in stock` : "Ask on WhatsApp"}</p>
                 </div>
                 <div className="p-4">
                   <h3 className="font-display text-lg font-bold text-slate-900">{option.title}</h3>
@@ -442,29 +413,7 @@ export default function ShopClient({
           </button>
         </div>
 
-        <div className="mt-4 grid gap-4 lg:grid-cols-2">
-          <div className="flex flex-wrap gap-2">
-            {VALUE_LEVEL_OPTIONS.map((option) => {
-              const Icon = option.icon;
-              const active = valueLevel === option.value;
-
-              return (
-                <button
-                  key={option.value}
-                  onClick={() => setValueLevel(option.value)}
-                  className={`inline-flex items-center gap-2 rounded-full border px-3 py-1.5 text-xs font-semibold uppercase tracking-[0.11em] transition ${
-                    active
-                      ? "border-cyan-300 bg-cyan-50 text-cyan-700"
-                      : "border-slate-200 bg-white text-slate-600 hover:border-cyan-200"
-                  }`}
-                  title={option.description}
-                >
-                  <Icon size={13} /> {option.label}
-                </button>
-              );
-            })}
-          </div>
-
+        <div className="mt-4">
           {showCompactFilters ? (
             <div className="flex flex-wrap gap-2 lg:justify-end">
               {PRICE_BUCKETS.map((bucket) => {
@@ -494,7 +443,7 @@ export default function ShopClient({
 
         <div className="mt-4 flex flex-wrap items-center justify-between gap-3 border-t border-slate-100 pt-4">
           <p className="text-sm font-semibold text-slate-700">
-            {filteredProducts.length} product{filteredProducts.length === 1 ? "" : "s"} found
+            {`${filteredProducts.length} ${filteredProducts.length === 1 ? "product" : "products"} found`}
           </p>
           {hasActiveFilters ? (
             <button
@@ -508,18 +457,20 @@ export default function ShopClient({
       </section>
 
       {visibleProducts.length === 0 ? (
-        <section className="surface-card rounded-3xl p-10 text-center">
-          <ShoppingBag size={36} className="mx-auto text-slate-300" />
-          <h3 className="mt-4 font-display text-2xl font-bold text-slate-900">No products match this setup</h3>
-          <p className="mt-2 text-sm text-slate-600">
-            Try the other department, or clear the search.
+        <section className="surface-card rounded-[12px] p-10 text-center">
+          <ShoppingBag size={36} className="mx-auto text-[var(--muted)]" />
+          <h3 className="mt-4 text-2xl font-bold text-[var(--ink)]">Nothing is listed for this search yet</h3>
+          <p className="mt-2 text-sm leading-6 text-[var(--muted)]">
+            Try packaging or craft, or send the item name on WhatsApp and we will check the shelf.
           </p>
-          <button
-            onClick={clearFilters}
-            className="mt-5 inline-flex items-center gap-2 rounded-full bg-slate-900 px-5 py-2.5 text-sm font-semibold text-white hover:bg-slate-800"
-          >
-            Reset Shop <ArrowRight size={15} />
-          </button>
+          <div className="mt-5 flex flex-wrap justify-center gap-3">
+            <button type="button" onClick={clearFilters} className="btn-primary">
+              Clear search
+            </button>
+            <a href="https://wa.me/94766609143?text=Hello%20Siyatha%2C%20I%20am%20looking%20for%20an%20item." className="btn-whatsapp no-underline" target="_blank" rel="noreferrer">
+              Ask on WhatsApp
+            </a>
+          </div>
         </section>
       ) : (
         <section className="grid grid-cols-1 gap-6 sm:grid-cols-2 xl:grid-cols-3">
@@ -593,7 +544,7 @@ export default function ShopClient({
                       disabled={!isInStock}
                       className={`inline-flex flex-1 items-center justify-center gap-2 rounded-full px-4 py-2.5 text-sm font-semibold transition ${
                         isInStock
-                          ? "bg-slate-900 text-white hover:bg-slate-800"
+                          ? "bg-[#F2B400] text-[#2b1636] hover:bg-[#F4A100]"
                           : "cursor-not-allowed bg-slate-200 text-slate-500"
                       }`}
                     >

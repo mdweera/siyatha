@@ -4,40 +4,29 @@ import { ArrowRight } from "lucide-react";
 import {
   FINISHES,
   PRINT_FAMILIES,
-  PRINT_FAQS,
-  PRINT_SIZES,
+  printFaqs,
   SHOP_PHONE_DISPLAY,
   SITE_URL,
   formatRs,
   lowestFamilyPrice,
+  pricedPrintSizes,
   sizesForFamily,
   whatsappHref,
 } from "@/lib/storefront";
+import { getShopSettings } from "@/lib/shopDelivery";
+import { pageMeta } from "@/lib/site";
 
-export const metadata: Metadata = {
-  title: "Photo Print Sri Lanka",
-  description:
-    "Photo print in Sri Lanka from Rs 30. Upload photos for 4×6 prints, enlargements, passport sheets, and photo cards. Prints ship within one business day.",
-  keywords: [
-    "photo print sri lanka",
-    "photo printing sri lanka",
-    "4x6 photo print",
-    "passport photo sri lanka",
-    "photo print colombo",
-    "photo print galle",
-    "photo print ambalangoda",
-  ],
-  alternates: { canonical: "/photo-prints" },
-  openGraph: {
-    title: "Photo Print Sri Lanka | Siyatha",
-    description:
-      "Upload photos and we ship the prints within one business day. Copies, enlargements, passport sheets, and cards, with islandwide delivery.",
-    url: `${SITE_URL}/photo-prints`,
-    type: "website",
-  },
-};
+export const metadata: Metadata = pageMeta(
+  "/photo-prints",
+  "Photo print Sri Lanka",
+  "Photo prints in Sri Lanka from Rs 30. Upload 4×6 prints, enlargements, passport sheets, and cards. Ships in one business day."
+);
 
-export default function PhotoPrintsPage() {
+export default async function PhotoPrintsPage() {
+  const shop = await getShopSettings();
+  const sizes = pricedPrintSizes(shop.printPrices);
+  const bulk = shop.printPrices;
+  const faqs = printFaqs(shop.printPrices);
   const jsonLd = {
     "@context": "https://schema.org",
     "@graph": [
@@ -59,7 +48,7 @@ export default function PhotoPrintsPage() {
       },
       {
         "@type": "FAQPage",
-        mainEntity: PRINT_FAQS.map((faq) => ({
+        mainEntity: faqs.map((faq) => ({
           "@type": "Question",
           name: faq.question,
           acceptedAnswer: { "@type": "Answer", text: faq.answer },
@@ -85,14 +74,14 @@ export default function PhotoPrintsPage() {
             A photo order placed on a working day is shipped the same business day, then the courier takes it across Sri Lanka.
           </p>
           <div className="mt-6 flex flex-wrap gap-3">
-            <Link href="/photo-prints/order" className="inline-flex items-center gap-2 rounded-full bg-slate-900 px-6 py-3 text-sm font-bold text-white">
+            <Link href="/photo-prints/order" className="btn-primary no-underline">
               Upload photos <ArrowRight size={16} />
             </Link>
             <a
               href={whatsappHref("Hello Siyatha, I want a photo print quote.")}
               target="_blank"
               rel="noreferrer"
-              className="inline-flex items-center rounded-full border border-emerald-300 bg-emerald-50 px-6 py-3 text-sm font-semibold text-emerald-800"
+              className="btn-whatsapp no-underline"
             >
               WhatsApp a quote
             </a>
@@ -106,7 +95,7 @@ export default function PhotoPrintsPage() {
           </p>
           <div className="mt-5 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
             {["4x6", "5x7", "passport-8", "8x10"].map((id) => {
-              const size = PRINT_SIZES.find((item) => item.id === id);
+              const size = sizes.find((item) => item.id === id);
               if (!size) {
                 return null;
               }
@@ -131,8 +120,8 @@ export default function PhotoPrintsPage() {
           <h2 className="font-display text-3xl font-bold text-slate-900">Choose a print</h2>
           <div className="mt-5 grid gap-4 md:grid-cols-2">
             {PRINT_FAMILIES.map((family) => {
-              const from = lowestFamilyPrice(family.id);
-              const first = sizesForFamily(family.id)[0];
+              const from = lowestFamilyPrice(family.id, sizes);
+              const first = sizesForFamily(family.id, sizes)[0];
               return (
                 <Link
                   key={family.id}
@@ -153,7 +142,34 @@ export default function PhotoPrintsPage() {
           <div className="surface-card rounded-[1.75rem] p-5 sm:p-6">
             <h2 className="font-display text-2xl font-bold text-slate-900">Photo print prices</h2>
             <p className="mt-2 text-sm text-slate-600">Per print, in Sri Lankan rupees. Paper finish does not change the price.</p>
-            <div className="mt-4 overflow-x-auto">
+            <div className="mt-4 grid grid-cols-3 gap-2 text-center text-sm">
+              <div className="rounded-[12px] bg-[var(--page)] p-3">
+                <p className="font-bold">1–{bulk.bulk12Copies - 1}</p>
+                <p className="text-[var(--muted)]">List price</p>
+              </div>
+              <div className="rounded-[12px] bg-[var(--yellow-tint)] p-3">
+                <p className="font-bold">{bulk.bulk12Copies}+</p>
+                <p>{bulk.bulk12Percent}% less</p>
+              </div>
+              <div className="rounded-[12px] bg-[var(--yellow)] p-3">
+                <p className="font-bold">{bulk.bulk30Copies}+</p>
+                <p>{bulk.bulk30Percent}% less</p>
+              </div>
+            </div>
+            <ul className="mt-4 space-y-2 sm:hidden">
+              {sizes.map((size) => (
+                <li key={size.id}>
+                  <Link href={`/photo-prints/order?size=${size.id}`} className="flex items-center justify-between rounded-[12px] border border-[var(--line)] px-3 py-3 no-underline">
+                    <span>
+                      <span className="block font-semibold">{size.label}</span>
+                      <span className="text-sm text-[var(--muted)]">{size.cm}</span>
+                    </span>
+                    <span className="font-bold">{formatRs(size.price)}</span>
+                  </Link>
+                </li>
+              ))}
+            </ul>
+            <div className="mt-4 hidden overflow-x-auto sm:block">
               <table className="w-full min-w-[32rem] text-left text-sm">
                 <thead className="text-xs uppercase tracking-[0.12em] text-slate-500">
                   <tr>
@@ -164,7 +180,7 @@ export default function PhotoPrintsPage() {
                   </tr>
                 </thead>
                 <tbody>
-                  {PRINT_SIZES.map((size) => (
+                  {sizes.map((size) => (
                     <tr key={size.id} className="border-t border-[#CD7DA2]/20">
                       <td className="py-3 font-semibold text-slate-900">{size.label}</td>
                       <td className="py-3 text-slate-600">{size.cm}</td>
@@ -204,7 +220,7 @@ export default function PhotoPrintsPage() {
                 href={whatsappHref("Hello Siyatha, I need a price for a framed photo or a wall print.")}
                 target="_blank"
                 rel="noreferrer"
-                className="mt-4 inline-flex text-sm font-semibold text-[#B10C53]"
+                className="btn-whatsapp mt-4 no-underline"
               >
                 Ask for a wall-print price
               </a>
@@ -215,7 +231,7 @@ export default function PhotoPrintsPage() {
         <section>
           <h2 className="font-display text-3xl font-bold text-slate-900">Questions</h2>
           <div className="mt-5 grid gap-3">
-            {PRINT_FAQS.map((faq) => (
+            {faqs.map((faq) => (
               <details key={faq.question} className="surface-card rounded-2xl p-4">
                 <summary className="cursor-pointer font-semibold text-slate-900">{faq.question}</summary>
                 <p className="mt-2 text-sm leading-6 text-slate-600">{faq.answer}</p>

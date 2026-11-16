@@ -3,6 +3,14 @@ import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 
 export async function proxy(request: NextRequest) {
+  const host = request.headers.get("host") || "";
+  if (host.startsWith("www.")) {
+    const url = request.nextUrl.clone();
+    url.hostname = host.replace(/^www\./, "").split(":")[0];
+    url.protocol = "https";
+    return NextResponse.redirect(url, 308);
+  }
+
   const token = await getToken({ req: request, secret: process.env.NEXTAUTH_SECRET });
 
   const isAuthPage = request.nextUrl.pathname.startsWith('/login') || request.nextUrl.pathname.startsWith('/register');
@@ -29,9 +37,14 @@ export async function proxy(request: NextRequest) {
     return NextResponse.redirect(new URL('/login?callbackUrl=' + encodeURIComponent(request.nextUrl.pathname), request.url));
   }
 
-  return NextResponse.next();
+  const response = NextResponse.next();
+  const lang = request.nextUrl.searchParams.get("lang");
+  if (lang === "si" || lang === "en") {
+    response.cookies.set("siyatha-lang", lang, { path: "/", maxAge: 60 * 60 * 24 * 365, sameSite: "lax" });
+  }
+  return response;
 }
 
 export const config = {
-  matcher: ['/admin/:path*', '/dashboard/:path*', '/login', '/register'],
+  matcher: ["/((?!_next/static|_next/image|favicon.ico|.*\\.(?:svg|png|jpg|jpeg|gif|webp|ico)$).*)"],
 };
