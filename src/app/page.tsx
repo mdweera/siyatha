@@ -13,6 +13,7 @@ const SAMPLE_PRINTS = [
   { src: "/carousel-03.jpg", alt: "Photo print sizes from a 4 by 6 to a large family print" },
   { src: "/carousel-04.jpg", alt: "Birthday photo prints and a first birthday card" },
   { src: "/carousel-05.jpg", alt: "Framed beach photos beside loose prints on a shelf" },
+  { src: "/carousel-06.jpg", alt: "A camera held ready to take a photo" },
 ];
 
 export const dynamic = "force-dynamic";
@@ -43,8 +44,8 @@ export default async function HomePage() {
   return (
     <div>
       <HeroCarousel />
-      <div className="mx-auto flex w-full max-w-7xl flex-col gap-12 px-4 py-8 sm:px-6 lg:px-8">
-        <section className="grid items-center gap-8 lg:grid-cols-[1.1fr_0.9fr]">
+      <section className="border-t-8 border-[#F2B400] bg-white">
+        <div className="mx-auto grid w-full max-w-7xl items-center gap-8 px-4 py-14 sm:px-6 lg:grid-cols-[1.1fr_0.9fr] lg:px-8">
           <div>
             <p className="text-sm font-semibold text-[var(--muted)]">{copy.promise}</p>
             <h1 className="mt-3 max-w-xl text-4xl font-bold leading-tight text-[var(--ink)] sm:text-5xl">{copy.title}</h1>
@@ -67,9 +68,14 @@ export default async function HomePage() {
               </div>
             ))}
           </div>
-        </section>
+        </div>
+      </section>
 
-        <section className="grid gap-3 md:grid-cols-3">
+      <section className="border-t-8 border-[#DE2684] bg-[#fff3c4]">
+        <div className="mx-auto w-full max-w-7xl px-4 py-14 sm:px-6 lg:px-8">
+          <p className="text-xs font-bold uppercase tracking-[0.16em] text-[#B10C53]">Shop</p>
+          <h2 className="mt-2 text-3xl font-bold">Three things we sell</h2>
+        <div className="mt-6 grid gap-3 md:grid-cols-3">
           {[
             {
               href: "/photo-prints",
@@ -116,10 +122,14 @@ export default async function HomePage() {
               </div>
             </Link>
           ))}
-        </section>
+          </div>
+        </div>
+      </section>
 
-        <section>
-          <h2 className="text-2xl font-bold">{copy.stepsTitle}</h2>
+      <section className="border-t-8 border-[#681878] bg-white">
+        <div className="mx-auto w-full max-w-7xl px-4 py-14 sm:px-6 lg:px-8">
+          <p className="text-xs font-bold uppercase tracking-[0.16em] text-[#681878]">Order</p>
+          <h2 className="mt-2 text-3xl font-bold">{copy.stepsTitle}</h2>
           <ol className="mt-4 grid gap-3 md:grid-cols-3">
             {[
               [copy.step1, copy.step1Text],
@@ -133,10 +143,13 @@ export default async function HomePage() {
               </li>
             ))}
           </ol>
-        </section>
+        </div>
+      </section>
 
-        <section>
-          <h2 className="text-2xl font-bold">{copy.pricesTitle}</h2>
+      <section className="border-t-8 border-[#F2B400] bg-[#fff0f6]">
+        <div className="mx-auto w-full max-w-7xl px-4 py-14 sm:px-6 lg:px-8">
+          <p className="text-xs font-bold uppercase tracking-[0.16em] text-[#B10C53]">Prices</p>
+          <h2 className="mt-2 text-3xl font-bold">{copy.pricesTitle}</h2>
           <ul className="mt-4 grid gap-3 sm:grid-cols-2 lg:grid-cols-5">
             {prices.map((size) => (
               <li key={size.id}>
@@ -148,43 +161,51 @@ export default async function HomePage() {
               </li>
             ))}
           </ul>
-        </section>
+        </div>
+      </section>
 
-        <section className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+      <section className="border-t-8 border-[#111] bg-[#2b1636] text-white">
+        <div className="mx-auto grid w-full max-w-7xl gap-3 px-4 py-14 sm:grid-cols-2 sm:px-6 lg:grid-cols-4 lg:px-8">
           {[
             { icon: Clock3, text: copy.trustShip, tone: "bg-[#DE2684] text-white" },
             { icon: ShieldCheck, text: copy.trustFile, tone: "bg-[#00A36A] text-white" },
             { icon: Truck, text: fee, tone: "bg-[#F2B400] text-[#111]" },
             { icon: MessageCircle, text: copy.trustChat, tone: "bg-[#25D366] text-[#083018]" },
           ].map((item) => (
-            <div key={item.text} className="rounded-[12px] bg-[var(--yellow-tint)] p-4">
+            <div key={item.text} className="rounded-[12px] bg-white/10 p-4">
               <span className={`inline-flex h-10 w-10 items-center justify-center rounded-2xl ${item.tone}`}>
                 <item.icon size={18} />
               </span>
-              <p className="mt-3 text-sm leading-6">{item.text}</p>
+              <p className="mt-3 text-sm leading-6 text-white">{item.text}</p>
             </div>
           ))}
-        </section>
+        </div>
+      </section>
 
-        <section>
-          <h2 className="text-2xl font-bold">{copy.galleryTitle}</h2>
+      <section className="border-t-8 border-[#DE2684] bg-white">
+        <div className="mx-auto w-full max-w-7xl px-4 py-14 sm:px-6 lg:px-8">
+          <p className="text-xs font-bold uppercase tracking-[0.16em] text-[#B10C53]">Prints</p>
+          <h2 className="mt-2 text-3xl font-bold">{copy.galleryTitle}</h2>
           <p className="mt-2 max-w-2xl text-sm leading-6 text-[var(--muted)]">{copy.galleryBody}</p>
-          <div className="mt-4 grid grid-cols-2 gap-3 lg:grid-cols-5">
+          <div className="mt-4 grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-6">
             {SAMPLE_PRINTS.map((photo) => (
               <Link key={photo.src} href="/photo-prints/order" className="relative block aspect-[4/3] overflow-hidden rounded-[12px]">
                 <Image src={photo.src} alt={photo.alt} fill className="object-cover" sizes="(max-width: 1024px) 50vw, 20vw" />
               </Link>
             ))}
           </div>
-        </section>
+        </div>
+      </section>
 
-        <section className="surface-card p-5">
+      <section className="border-t-8 border-[#F2B400] bg-[#fff8ee]">
+        <div className="mx-auto grid w-full max-w-7xl gap-8 px-4 py-14 sm:px-6 lg:px-8">
+        <div className="surface-card p-5">
           <h2 className="text-xl font-bold">{copy.reviewTitle}</h2>
           <p className="mt-2 text-sm leading-6 text-[var(--muted)]">{copy.reviewBody}</p>
-        </section>
+        </div>
 
-        <section>
-          <h2 className="text-2xl font-bold">{copy.faqTitle}</h2>
+        <div>
+          <h2 className="text-3xl font-bold">{copy.faqTitle}</h2>
           <div className="mt-4 grid gap-2">
             {faqs.map((faq) => (
               <details key={faq.question} className="surface-card p-4">
@@ -193,8 +214,9 @@ export default async function HomePage() {
               </details>
             ))}
           </div>
-        </section>
-      </div>
+        </div>
+        </div>
+      </section>
     </div>
   );
 }

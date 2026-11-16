@@ -1,95 +1,96 @@
 import { getServerSession } from "next-auth/next";
-import { authOptions } from "@/app/api/auth/[...nextauth]/route";
+import { authOptions } from "@/lib/auth";
 import { redirect } from "next/navigation";
 import Link from "next/link";
-import { Package, ShieldCheck, Heart, Settings } from "lucide-react";
+import dbConnect from "@/lib/mongodb";
+import Order from "@/models/Order";
+
+const STEPS = ["received", "printing", "packed", "shipped", "delivered"] as const;
+
+const STEP_LABEL: Record<string, string> = {
+  received: "Received",
+  printing: "Printing",
+  packed: "Packed",
+  shipped: "Shipped",
+  delivered: "Delivered",
+  pending: "Received",
+  processing: "Printing",
+  cancelled: "Cancelled",
+};
 
 export default async function DashboardPage() {
   const session = await getServerSession(authOptions);
-
-  if (!session) {
+  if (!session?.user?.id) {
     redirect("/login");
   }
 
-  // Real app will fetch from /api/user/dashboard
-  const user = session.user;
+  await dbConnect();
+  const email = session.user.email || "";
+  const orders = await Order.find({
+    $or: [{ userId: session.user.id }, ...(email ? [{ "shippingAddress.email": email }] : [])],
+  })
+    .sort({ createdAt: -1 })
+    .limit(30)
+    .lean();
 
   return (
-    <div className="min-h-screen bg-gray-50 flex">
-      {/* Sidebar */}
-      <aside className="w-64 bg-white border-r hidden md:block">
-        <div className="p-6">
-          <h2 className="text-2xl font-bold tracking-tight text-gray-900 border-b pb-4">
-            Hello, {user.name?.split(' ')[0] || 'User'}
-          </h2>
-          <nav className="mt-8 space-y-2">
-            <Link href="/dashboard/orders" className="flex items-center gap-3 px-3 py-2 text-gray-600 rounded-lg hover:bg-gray-100 transition-colors">
-              <Package className="w-5 h-5" />
-              <span>My Orders</span>
-            </Link>
-            <Link href="/dashboard/warranty" className="flex items-center gap-3 px-3 py-2 text-gray-600 rounded-lg hover:bg-gray-100 transition-colors">
-              <ShieldCheck className="w-5 h-5" />
-              <span>Warranty Info</span>
-            </Link>
-            <Link href="/dashboard/favorites" className="flex items-center gap-3 px-3 py-2 text-gray-600 rounded-lg hover:bg-gray-100 transition-colors">
-              <Heart className="w-5 h-5" />
-              <span>Favorites</span>
-            </Link>
-            <Link href="/dashboard/settings" className="flex items-center gap-3 px-3 py-2 text-gray-600 rounded-lg hover:bg-gray-100 transition-colors">
-              <Settings className="w-5 h-5" />
-              <span>Settings</span>
-            </Link>
-          </nav>
-        </div>
-      </aside>
+    <div className="mx-auto w-full max-w-4xl px-4 py-10 sm:px-6">
+      <p className="text-sm font-semibold text-[var(--muted)]">Your account</p>
+      <h1 className="mt-2 text-4xl font-bold">Hello, {session.user.name?.split(" ")[0] || "there"}</h1>
+      <p className="mt-2 text-sm text-[var(--muted)]">Order status updates here when the shop moves a print along.</p>
 
-      {/* Main Content */}
-      <main className="flex-1 p-8">
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-          <div className="bg-white p-6 rounded-xl shadow-sm border">
-            <div className="flex items-center gap-4">
-              <div className="p-3 bg-blue-50 text-blue-600 rounded-lg">
-                <Package className="w-6 h-6" />
-              </div>
-              <div>
-                <p className="text-sm font-medium text-gray-500">Active Orders</p>
-                <h3 className="text-2xl font-bold text-gray-900">0</h3>
-              </div>
-            </div>
+      <div className="mt-8 space-y-4">
+        {orders.length === 0 ? (
+          <div className="surface-card p-6">
+            <p>No orders yet.</p>
+            <Link href="/photo-prints/order" className="btn-primary mt-4 no-underline">
+              Upload photos
+            </Link>
           </div>
-          <div className="bg-white p-6 rounded-xl shadow-sm border">
-            <div className="flex items-center gap-4">
-              <div className="p-3 bg-green-50 text-green-600 rounded-lg">
-                <ShieldCheck className="w-6 h-6" />
-              </div>
-              <div>
-                <p className="text-sm font-medium text-gray-500">Items Under Warranty</p>
-                <h3 className="text-2xl font-bold text-gray-900">0</h3>
-              </div>
-            </div>
-          </div>
-          <div className="bg-white p-6 rounded-xl shadow-sm border">
-            <div className="flex items-center gap-4">
-              <div className="p-3 bg-cyan-50 text-cyan-700 rounded-lg">
-                <Heart className="w-6 h-6" />
-              </div>
-              <div>
-                <p className="text-sm font-medium text-gray-500">Favorites</p>
-                <h3 className="text-2xl font-bold text-gray-900">0</h3>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <div className="bg-white rounded-xl shadow-sm border overflow-hidden">
-          <div className="px-6 py-4 border-b">
-            <h3 className="text-lg font-semibold text-gray-900">Recent Purchases</h3>
-          </div>
-          <div className="p-6 text-center text-gray-500">
-            You haven't made any purchases yet.
-          </div>
-        </div>
-      </main>
+        ) : (
+          orders.map((order) => {
+            const step = String(order.printStep || order.status || "received");
+            const stepIndex = STEPS.indexOf(step as (typeof STEPS)[number]);
+            return (
+              <article key={String(order._id)} className="surface-card p-5">
+                <div className="flex flex-wrap items-start justify-between gap-3">
+                  <div>
+                    <p className="text-sm font-semibold text-[var(--muted)]">{order.orderNumber}</p>
+                    <h2 className="text-xl font-bold">{STEP_LABEL[step] || step}</h2>
+                    <p className="mt-1 text-sm text-[var(--muted)]">
+                      {new Date(order.createdAt).toLocaleString("en-LK")} · Rs {Number(order.totalAmount || 0).toLocaleString("en-LK")}
+                    </p>
+                  </div>
+                  <Link href={`/order-confirmation/${order._id}`} className="text-sm font-semibold underline">
+                    View order
+                  </Link>
+                </div>
+                {step !== "cancelled" && stepIndex >= 0 ? (
+                  <ol className="mt-4 grid grid-cols-5 gap-2">
+                    {STEPS.map((item, index) => (
+                      <li
+                        key={item}
+                        className={`rounded-xl px-2 py-2 text-center text-xs font-bold ${
+                          index <= stepIndex ? "bg-[#F2B400] text-[#111]" : "bg-white text-slate-400"
+                        }`}
+                      >
+                        {STEP_LABEL[item]}
+                      </li>
+                    ))}
+                  </ol>
+                ) : null}
+                <ul className="mt-4 space-y-1 text-sm">
+                  {(order.items || []).map((item: { name?: string; quantity?: number }, index: number) => (
+                    <li key={`${item.name}-${index}`}>
+                      {item.quantity} × {item.name}
+                    </li>
+                  ))}
+                </ul>
+              </article>
+            );
+          })
+        )}
+      </div>
     </div>
   );
 }

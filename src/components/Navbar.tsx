@@ -51,11 +51,10 @@ export default function Navbar() {
   return (
     <header className="sticky top-0 z-50 border-b border-[var(--line)] bg-white/95 backdrop-blur">
       <div className="mx-auto flex w-full max-w-7xl items-center gap-3 px-4 py-2.5 sm:px-6 lg:px-8">
-        <Link href="/" className="flex min-w-0 items-center gap-2">
-          <span className="relative h-10 w-10 shrink-0 overflow-hidden rounded-[12px] bg-white">
-            <Image src="/siyatha-logo.jpg" alt="Siyatha" fill className="object-cover" sizes="40px" priority />
+        <Link href="/" className="flex min-w-0 items-center" aria-label="Siyatha">
+          <span className="relative h-11 w-11 shrink-0 overflow-hidden rounded-[12px] bg-white">
+            <Image src="/logo.jpg" alt="Siyatha" fill className="object-cover" sizes="44px" priority />
           </span>
-          <span className="truncate text-base font-bold text-[var(--ink)]">Siyatha</span>
         </Link>
 
         <nav className="hidden items-center gap-1 lg:flex" aria-label="Primary">

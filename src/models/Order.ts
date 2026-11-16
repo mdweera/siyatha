@@ -18,7 +18,11 @@ export interface IOrder extends mongoose.Document {
     subtotal: number;
     kind?: "product" | "print";
     detail?: string;
+    sizeId?: string;
+    finishId?: string;
   }[];
+
+  printStep?: "received" | "printing" | "packed" | "shipped" | "delivered";
 
   totalAmount: number;
   deliveryCharge?: number;
@@ -59,7 +63,10 @@ const OrderSchema = new mongoose.Schema(
       subtotal: { type: Number, required: true, min: 0 },
       kind: { type: String, enum: ['product', 'print'], default: 'product' },
       detail: { type: String },
+      sizeId: { type: String },
+      finishId: { type: String },
     }],
+    printStep: { type: String, enum: ['received', 'printing', 'packed', 'shipped', 'delivered'] },
 
     totalAmount: { type: Number, required: true, min: 0 },
     deliveryCharge: { type: Number, default: 0, min: 0 },

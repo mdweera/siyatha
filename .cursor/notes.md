@@ -16,4 +16,7 @@
 - Checkout does not require an account. The shop grid shows packaging and craft unless the visitor searches. WhatsApp actions use `#25D366`.
 - The one-day shipping bar is solid yellow `#F2B400` with black text. No gradient.
 - Home carousel photos are `public/carousel-01.webp` through `public/carousel-05.jpg`. Slide 01 is the table of prints.
-- Photo uploads go to Cloudinary folder `siyatha/prints` when `CLOUDINARY_API_KEY`, `CLOUDINARY_API_SECRET`, and `NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME` are set. Otherwise they are written to `public/uploads/prints`. JPG, PNG, WEBP, and HEIC are accepted, including phone photos with an empty MIME type. The crop is baked in the browser before upload.
+- Photo uploads use Cloudinary only. `CLOUDINARY_URL` is enough. Files land in `siyatha/prints/inbox/YYYY/MM/DD` and move to `siyatha/prints/orders/<orderNumber>/` when the order is placed. If Cloudinary is missing, the file is stored in Mongo `PrintFile`.
+- Google sign-in needs `GOOGLE_CLIENT_ID` and `GOOGLE_CLIENT_SECRET`. The redirect is `/api/auth/callback/google`. Customers see order steps on `/dashboard`. Cloud POS reads the same `online_orders` collection from `siyatha_online_db` at `/management/photo-prints`.
+- The browser tab icon is the Siyatha logo (`src/app/icon.png`). The header shows the logo without the word beside it.
+- Home sections are full-width bands with a thick colored top border. Carousel slides are `public/carousel-01.webp` through `public/carousel-06.jpg`. Slide 01 stays first.

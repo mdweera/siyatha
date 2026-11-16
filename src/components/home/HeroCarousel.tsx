@@ -11,6 +11,7 @@ const SLIDES = [
   { src: "/carousel-03.jpg", alt: "Photo print sizes from a 4 by 6 to a large family print" },
   { src: "/carousel-04.jpg", alt: "Birthday photo prints and a first birthday card" },
   { src: "/carousel-05.jpg", alt: "Framed beach photos beside loose prints on a shelf" },
+  { src: "/carousel-06.jpg", alt: "A camera held ready to take a photo" },
 ];
 
 export default function HeroCarousel() {

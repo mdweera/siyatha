@@ -59,9 +59,9 @@ export default async function PhotoPrintsPage() {
   };
 
   return (
-    <div className="px-4 py-8 sm:px-6 lg:px-8">
+    <div>
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
-      <div className="mx-auto w-full max-w-7xl space-y-12">
+      <div className="mx-auto flex w-full max-w-7xl flex-col [&>section]:border-t-8 [&>section]:border-[#F2B400] [&>section]:px-4 [&>section]:py-12 [&>section]:sm:px-6 [&>section]:lg:px-8 [&>section:nth-child(even)]:border-[#DE2684] [&>section:nth-child(even)]:bg-white [&>section:nth-child(odd)]:bg-[#fff8ee]">
         <section className="grid items-center gap-6 lg:grid-cols-[1.1fr_0.9fr]">
           <div className="surface-card rounded-[2rem] p-6 sm:p-8">
             <p className="text-sm text-slate-500">Home / Photo prints</p>

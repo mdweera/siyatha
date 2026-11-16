@@ -8,6 +8,7 @@ import { authOptions } from "@/lib/auth";
 import { findFinish, findPrintSize, printUnitPrice } from "@/lib/storefront";
 import { quoteDelivery } from "@/lib/delivery";
 import { getShopSettings } from "@/lib/shopDelivery";
+import { movePrintToOrder } from "@/lib/cloudinaryPrints";
 
 type CheckoutItemInput = {
   productId?: string;
@@ -147,6 +148,8 @@ export async function POST(request: NextRequest) {
           subtotal: price * item.quantity,
           kind: "print" as const,
           detail: item.detail || "",
+          sizeId: item.sizeId || "",
+          finishId: item.finishId || finish?.id || "lustre",
         };
       }),
     ];
@@ -155,6 +158,16 @@ export async function POST(request: NextRequest) {
     const deliveryQuote = quoteDelivery(computedTotal, shop);
 
     // Create order
+    const orderNumber = `SO-${Date.now()}`;
+    if (printItems.length > 0) {
+      for (let index = 0; index < orderItems.length; index += 1) {
+        const item = orderItems[index];
+        if (item.kind === "print" && item.image) {
+          item.image = await movePrintToOrder(item.image, orderNumber, index);
+        }
+      }
+    }
+
     const order = new Order({
       userId: session?.user?.id,
       customerName: `${firstName} ${lastName}`.trim(),
@@ -165,7 +178,8 @@ export async function POST(request: NextRequest) {
       totalAmount: deliveryQuote.total,
       paymentMethod,
       status: "pending",
-      orderNumber: `SO-${Date.now()}`,
+      ...(printItems.length > 0 ? { printStep: "received" as const } : {}),
+      orderNumber,
     });
 
     await order.save();

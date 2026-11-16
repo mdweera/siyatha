@@ -5,7 +5,7 @@ export type UserRole = 'ADMIN' | 'STAFF' | 'USER';
 export interface IUser extends mongoose.Document {
   name: string;
   email?: string;
-  phone: string;
+  phone?: string;
   password?: string;
   role: UserRole;
   favorites: mongoose.Types.ObjectId[];
@@ -18,7 +18,7 @@ const UserSchema = new mongoose.Schema(
     name: { type: String, required: true },
     email: { type: String, unique: true, sparse: true },
     // Link to POS via phone
-    phone: { type: String, required: true, unique: true }, 
+    phone: { type: String, unique: true, sparse: true }, 
     password: { type: String }, // Optional for POS customers who just verified phone
     role: { 
       type: String, 

@@ -31,12 +31,20 @@ export async function croppedPrintFile(
     const offsetY = (frameHeight - drawnHeight) * (Math.min(100, Math.max(0, cropY)) / 100);
     context.drawImage(image, offsetX, offsetY, drawnWidth, drawnHeight);
 
-    const blob = await new Promise<Blob | null>((resolve) => canvas.toBlob(resolve, "image/jpeg", 0.92));
+    const base = file.name.replace(/\.[^.]+$/, "") || "photo";
+    let quality = 0.9;
+    let blob: Blob | null = null;
+    while (quality >= 0.5) {
+      blob = await new Promise<Blob | null>((resolve) => canvas.toBlob(resolve, "image/jpeg", quality));
+      if (blob && blob.size <= 3_500_000) {
+        break;
+      }
+      quality -= 0.15;
+    }
     if (!blob) {
       return file;
     }
 
-    const base = file.name.replace(/\.[^.]+$/, "") || "photo";
     return new File([blob], `${base}.jpg`, { type: "image/jpeg" });
   } catch {
     return file;

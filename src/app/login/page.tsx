@@ -109,13 +109,20 @@ function LoginForm() {
             </div>
           </div>
 
-          <div>
+          <div className="space-y-3">
             <button
               type="submit"
               disabled={loading}
-              className="group relative w-full flex justify-center py-3 px-4 border border-transparent text-sm font-medium rounded-lg text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition shadow-md disabled:opacity-70 disabled:cursor-not-allowed"
+              className="btn-primary w-full disabled:cursor-not-allowed disabled:opacity-70"
             >
               {loading ? "Signing in..." : "Sign in"}
+            </button>
+            <button
+              type="button"
+              onClick={() => signIn("google", { callbackUrl: "/dashboard" })}
+              className="btn-secondary w-full"
+            >
+              Continue with Google
             </button>
           </div>
           

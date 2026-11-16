@@ -32,6 +32,7 @@ export const metadata: Metadata = {
   },
   description:
     "Photo print in Sri Lanka from Rs 30, packaging for online sellers, and craft materials. Cash on delivery and bank transfer.",
+  icons: { icon: [{ url: "/logo.jpg", type: "image/jpeg" }, { url: "/icon.png", type: "image/png" }] },
   alternates: {
     canonical: "/",
     languages: {

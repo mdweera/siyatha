@@ -79,6 +79,7 @@ export default function PrintStudio({ initialFamily, initialSize }: PrintStudioP
   const [photos, setPhotos] = useState<DraftPhoto[]>([]);
   const [copiesEach, setCopiesEach] = useState(1);
   const [dragOver, setDragOver] = useState(false);
+  const [step, setStep] = useState(startingSize ? 2 : isFamily(initialFamily) ? 1 : 0);
   const [error, setError] = useState("");
   const [uploading, setUploading] = useState(false);
   const [progress, setProgress] = useState("");
@@ -124,6 +125,15 @@ export default function PrintStudio({ initialFamily, initialSize }: PrintStudioP
     if (first) {
       setSizeId(first.id);
     }
+    setError("");
+    setStep(1);
+  };
+
+  const selectSize = (nextSizeId: string) => {
+    setSizeId(nextSizeId);
+    setFamily(familyFromSize(nextSizeId));
+    setError("");
+    setStep(2);
   };
 
   const addFiles = (list: FileList | File[]) => {
@@ -205,15 +215,38 @@ export default function PrintStudio({ initialFamily, initialSize }: PrintStudioP
 
   const uploadPhoto = async (photo: DraftPhoto) => {
     const aspect = size ? printAspect(size) : { width: 6, height: 4 };
-    const printable = photo.width > 0 ? await croppedPrintFile(photo.file, photo.cropX, photo.cropY, aspect) : photo.file;
+    const printable = await croppedPrintFile(photo.file, photo.cropX, photo.cropY, aspect);
+    if (printable.size > 4 * 1024 * 1024) {
+      throw new Error(`${photo.file.name} is too large after cropping. Try a smaller photo.`);
+    }
     const body = new FormData();
     body.set("file", printable);
     const response = await fetch("/api/photo-prints/upload", { method: "POST", body });
-    const payload = (await response.json()) as { url?: string; originalName?: string; error?: string };
+    const text = await response.text();
+    let payload: { url?: string; originalName?: string; error?: string } = {};
+    try {
+      payload = text ? (JSON.parse(text) as typeof payload) : {};
+    } catch {
+      throw new Error(response.status === 413 ? "That photo is too large. Try a smaller JPG." : "Could not upload that photo.");
+    }
     if (!response.ok || !payload.url) {
       throw new Error(payload.error || `Could not upload ${photo.file.name}.`);
     }
     return payload;
+  };
+
+  const goNext = () => {
+    if (step === 2 && photos.length === 0) {
+      setError("Add at least one photo.");
+      return;
+    }
+    setError("");
+    setStep((current) => Math.min(3, current + 1));
+  };
+
+  const goBack = () => {
+    setError("");
+    setStep((current) => Math.max(0, current - 1));
   };
 
   const addOrderToCart = async () => {
@@ -261,11 +294,46 @@ export default function PrintStudio({ initialFamily, initialSize }: PrintStudioP
     total,
   });
 
+  const steps = ["Print", "Size", "Photos", "Review"];
+
   return (
-    <div className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_320px] lg:items-start">
-      <div className="space-y-5">
+    <div className="mx-auto max-w-3xl">
+      <ol className="grid grid-cols-4 gap-2">
+        {steps.map((label, index) => {
+          const active = index === step;
+          const done = index < step;
+          return (
+            <li key={label}>
+              <button
+                type="button"
+                onClick={() => {
+                  if (done) {
+                    setError("");
+                    setStep(index);
+                  }
+                }}
+                disabled={!done && !active}
+                className={`flex w-full flex-col items-start rounded-2xl border px-3 py-3 text-left ${
+                  active
+                    ? "border-[#F2B400] bg-[#F2B400] text-[#111]"
+                    : done
+                      ? "border-[#681878] bg-white text-[#681878]"
+                      : "border-[var(--line)] bg-white/60 text-slate-400"
+                }`}
+              >
+                <span className="text-xs font-bold">{index + 1}</span>
+                <span className="text-sm font-bold">{label}</span>
+              </button>
+            </li>
+          );
+        })}
+      </ol>
+
+      <div className="mt-5">
+        {step === 0 ? (
         <section className="surface-card rounded-[1.75rem] p-4 sm:p-5">
           <p className="text-xs font-semibold uppercase tracking-[0.14em] text-[#B10C53]">1 · What to print</p>
+          <p className="mt-2 text-sm text-slate-600">Tap a type. The next step opens on its own.</p>
           <div className="mt-3 grid gap-2 sm:grid-cols-2">
             {PRINT_FAMILIES.map((item) => {
               const active = item.id === family;
@@ -285,9 +353,12 @@ export default function PrintStudio({ initialFamily, initialSize }: PrintStudioP
             })}
           </div>
         </section>
+        ) : null}
 
+        {step === 1 ? (
         <section className="surface-card rounded-[1.75rem] p-4 sm:p-5">
-          <p className="text-xs font-semibold uppercase tracking-[0.14em] text-[#B10C53]">2 · Size and paper</p>
+          <p className="text-xs font-semibold uppercase tracking-[0.14em] text-[#B10C53]">2 · Size</p>
+          <p className="mt-2 text-sm text-slate-600">Tap a size to continue. Paper finish is on the next step.</p>
           <div className="mt-3 flex flex-wrap gap-2">
             {sizesForFamily(family, catalog).map((item) => {
               const active = item.id === size?.id;
@@ -295,10 +366,7 @@ export default function PrintStudio({ initialFamily, initialSize }: PrintStudioP
                 <button
                   key={item.id}
                   type="button"
-                  onClick={() => {
-                    setSizeId(item.id);
-                    setFamily(familyFromSize(item.id));
-                  }}
+                  onClick={() => selectSize(item.id)}
                   className={`rounded-2xl border px-3 py-2 text-left transition ${
                     active ? "border-[#681878] bg-[#681878] text-white" : "border-slate-200 bg-white text-slate-800 hover:border-[#CD7DA2]"
                   }`}
@@ -313,38 +381,22 @@ export default function PrintStudio({ initialFamily, initialSize }: PrintStudioP
           </div>
           {size ? (
             <p className="mt-3 text-sm leading-6 text-slate-600">
-              {size.blurb} A sharp file is about {size.pixels}. Phone photos that are a bit smaller still print, and we message you if the picture will look soft. Paper choice does not change the price.
+              {size.blurb} A sharp file is about {size.pixels}. Phone photos that are a bit smaller still print.
             </p>
           ) : null}
-          <div className="mt-4 grid gap-2 sm:grid-cols-3">
-            {FINISHES.map((item) => {
-              const active = item.id === finishId;
-              return (
-                <button
-                  key={item.id}
-                  type="button"
-                  onClick={() => {
-                    if (isFinish(item.id)) {
-                      setFinishId(item.id);
-                    }
-                  }}
-                  className={`rounded-2xl border px-3 py-3 text-left transition ${
-                    active ? "border-[#DE2684] bg-[#fff6ea]" : "border-slate-200 bg-white hover:border-[#CD7DA2]"
-                  }`}
-                >
-                  <span className="block text-sm font-bold text-slate-900">{item.title}</span>
-                  <span className="mt-1 block text-xs leading-5 text-slate-600">{item.text}</span>
-                </button>
-              );
-            })}
-          </div>
+          <WizardNav onBack={goBack} />
         </section>
+        ) : null}
 
+        {step === 2 ? (
         <section className="surface-card rounded-[1.75rem] p-4 sm:p-5">
           <div className="flex flex-wrap items-end justify-between gap-3">
             <div>
               <p className="text-xs font-semibold uppercase tracking-[0.14em] text-[#B10C53]">3 · Your photos</p>
               <h2 className="mt-1 font-display text-2xl font-bold text-slate-900">Upload, then set copies</h2>
+              <p className="mt-1 text-sm text-slate-600">
+                {size ? `${size.label} · ${size.cm}` : "Choose a size"} · {finish.title}
+              </p>
             </div>
             <div className="flex items-center gap-2">
               <label className="text-xs font-semibold uppercase tracking-[0.08em] text-slate-500" htmlFor="copies-each">
@@ -367,6 +419,29 @@ export default function PrintStudio({ initialFamily, initialSize }: PrintStudioP
                 Apply to all
               </button>
             </div>
+          </div>
+
+          <div className="mt-4 grid gap-2 sm:grid-cols-3">
+            {FINISHES.map((item) => {
+              const active = item.id === finishId;
+              return (
+                <button
+                  key={item.id}
+                  type="button"
+                  onClick={() => {
+                    if (isFinish(item.id)) {
+                      setFinishId(item.id);
+                    }
+                  }}
+                  className={`rounded-2xl border px-3 py-3 text-left transition ${
+                    active ? "border-[#DE2684] bg-[#fff6ea]" : "border-slate-200 bg-white hover:border-[#CD7DA2]"
+                  }`}
+                >
+                  <span className="block text-sm font-bold text-slate-900">{item.title}</span>
+                  <span className="mt-1 block text-xs leading-5 text-slate-600">{item.text}</span>
+                </button>
+              );
+            })}
           </div>
 
           <button
@@ -406,7 +481,6 @@ export default function PrintStudio({ initialFamily, initialSize }: PrintStudioP
             }}
           />
 
-          {error ? <p className="mt-3 text-sm font-medium text-[var(--brand)]" role="alert">{error}</p> : null}
           <p className="mt-3 text-sm leading-6 text-[var(--muted)]">
             Photos are stored with this order so we can print them. Staff handling the order can see them. We delete them when you ask on WhatsApp. They are not published on the site.
           </p>
@@ -500,10 +574,16 @@ export default function PrintStudio({ initialFamily, initialSize }: PrintStudioP
               })}
             </ul>
           ) : null}
+          <WizardNav
+            onBack={goBack}
+            onNext={photos.length > 0 ? goNext : undefined}
+            nextLabel="Review the order"
+          />
         </section>
-      </div>
+        ) : null}
 
-      <aside className="surface-card rounded-[1.75rem] p-5 lg:sticky lg:top-28">
+        {step === 3 ? (
+      <aside className="surface-card rounded-[1.75rem] p-5">
         <p className="text-xs font-semibold uppercase tracking-[0.14em] text-[var(--muted)]">4 · Review</p>
         <h2 className="mt-2 font-display text-2xl font-bold text-slate-900">
           {size ? size.label : "Choose a size"}
@@ -552,7 +632,40 @@ export default function PrintStudio({ initialFamily, initialSize }: PrintStudioP
         <Link href="/photo-prints" className="mt-4 inline-flex text-sm font-semibold underline">
           Size guide and prices
         </Link>
+        <WizardNav onBack={goBack} />
       </aside>
+        ) : null}
+        {error ? (
+          <p className="mt-3 text-sm font-medium text-[var(--brand)]" role="alert">
+            {error}
+          </p>
+        ) : null}
+      </div>
+    </div>
+  );
+}
+
+function WizardNav({
+  onBack,
+  onNext,
+  nextLabel,
+}: {
+  onBack?: () => void;
+  onNext?: () => void;
+  nextLabel?: string;
+}) {
+  return (
+    <div className="mt-5 flex flex-wrap gap-3">
+      {onBack ? (
+        <button type="button" onClick={onBack} className="btn-secondary">
+          Back
+        </button>
+      ) : null}
+      {onNext ? (
+        <button type="button" onClick={onNext} className="btn-primary">
+          {nextLabel || "Continue"}
+        </button>
+      ) : null}
     </div>
   );
 }
