@@ -20,3 +20,5 @@
 - Google sign-in needs `GOOGLE_CLIENT_ID` and `GOOGLE_CLIENT_SECRET`. The redirect is `/api/auth/callback/google`. Customers see order steps on `/dashboard`. Cloud POS reads the same `online_orders` collection from `siyatha_online_db` at `/management/photo-prints`.
 - The browser tab icon is the Siyatha logo (`src/app/icon.png`). The header shows the logo without the word beside it.
 - Home sections are full-width bands with a thick colored top border. Carousel slides are `public/carousel-01.webp` through `public/carousel-06.jpg`. Slide 01 stays first.
+- Guest orders get a unique `trackingCode` (`SY-XXXXXX`) on create. Public lookup is `GET /api/orders/track?code=` and `/track`. Confirmation shows the code + login CTA. Home, nav, and footer link to `/track`.
+- Closable free-delivery banners on cart/checkout use `FreeDeliveryBanner` (session dismiss). Site-wide click/route pending UI is `NavigationFeedback` + `signalNavigationPending()` for `router.push`.

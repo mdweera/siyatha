@@ -10,6 +10,8 @@ import { ArrowLeft, CreditCard, Truck, MapPin, PhoneCall } from "lucide-react";
 import Link from "next/link";
 import toast from "react-hot-toast";
 import { trackEvent } from "@/lib/analytics";
+import FreeDeliveryBanner from "@/components/cart/FreeDeliveryBanner";
+import { signalNavigationPending } from "@/lib/navigationPending";
 
 interface ShippingForm {
   firstName: string;
@@ -113,6 +115,7 @@ export default function CheckoutPage() {
       clearCart();
       trackEvent("order_completed", { paymentMethod, total: quote.total });
       toast.success("Order placed successfully!");
+      signalNavigationPending("Opening confirmation");
       router.push(`/order-confirmation/${order._id}`);
     } catch (error) {
       toast.error(error instanceof Error ? error.message : "Failed to place order. Please try again.");
@@ -144,6 +147,12 @@ export default function CheckoutPage() {
       <p className="mb-8 mt-2 text-sm text-[var(--muted)]">
         {session ? "This order is saved to your account." : "No account is needed. Cash on delivery and bank transfer are both accepted."}
       </p>
+      <FreeDeliveryBanner
+        remaining={quote.remaining}
+        threshold={quote.threshold}
+        charge={quote.charge}
+        storageKey="siyatha-checkout-free-delivery"
+      />
       {items.some((item) => item.kind === "print") ? (
         <p className="mb-8 rounded-2xl border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-slate-700">
           Photo prints in this order use the pictures you uploaded. We message you on WhatsApp if a file needs a crop check before printing.

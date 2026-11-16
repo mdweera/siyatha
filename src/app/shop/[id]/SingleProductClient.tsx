@@ -22,6 +22,7 @@ import {
 } from "lucide-react";
 import { useCartStore } from "@/store/useCartStore";
 import { useSession } from "next-auth/react";
+import { signalNavigationPending } from "@/lib/navigationPending";
 
 type ProductData = {
   _id: string;
@@ -256,6 +257,7 @@ export default function SingleProductClient({ product, relatedProducts = [] }: S
     }
 
     handleAddToCart();
+    signalNavigationPending("Opening cart");
     router.push("/cart");
   };
 

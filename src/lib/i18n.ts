@@ -15,6 +15,7 @@ const dictionary = {
       close: "Close menu",
       login: "Log in",
       account: "Account",
+      track: "Track order",
     },
     home: {
       promise: "Print a photo, pack an order, or pick up materials for making at home.",
@@ -48,6 +49,10 @@ const dictionary = {
       reviewTitle: "What customers say",
       reviewBody: "Notes from people who ordered prints and packaging.",
       faqTitle: "Common questions",
+      trackTitle: "Track an order",
+      trackBody: "Enter the tracking code from your confirmation, or log in to see every order in one place.",
+      trackCta: "Track order",
+      trackLogin: "Log in for saved tracking",
     },
     footer: {
       order: "Choose a print or a product, add it to the cart, then pay by cash on delivery or bank transfer.",
@@ -57,6 +62,7 @@ const dictionary = {
       returns: "Returns and refunds",
       privacy: "Privacy",
       terms: "Terms",
+      track: "Track order",
       pay: "Cash on delivery and bank transfer",
       rights: "All rights reserved.",
     },
@@ -91,6 +97,7 @@ const dictionary = {
       close: "වසන්න",
       login: "ඇතුළු වන්න",
       account: "ගිණුම",
+      track: "ඇණවුම සොයන්න",
     },
     home: {
       promise: "ඡායාරූපයක් මුද්‍රණය කරන්න, ඇණවුමක් අසුරන්න, නැතහොත් අත්කම් ද්‍රව්‍ය ගන්න.",
@@ -124,6 +131,10 @@ const dictionary = {
       reviewTitle: "පාරිභෝගික අදහස්",
       reviewBody: "මුද්‍රණ සහ ඇසුරුම් ඇණවුම් කළ අයගේ සටහන්.",
       faqTitle: "නිතර අහන ප්‍රශ්න",
+      trackTitle: "ඇණවුම සොයන්න",
+      trackBody: "තහවුරු කිරීමේ කේතය ඇතුළත් කරන්න, නැතහොත් ඇතුළු වී සියලු ඇණවුම් එක තැනකින් බලන්න.",
+      trackCta: "ඇණවුම සොයන්න",
+      trackLogin: "සුරකින ලද ලුහුබැඳීම සඳහා ඇතුළු වන්න",
     },
     footer: {
       order: "මුද්‍රණයක් හෝ භාණ්ඩයක් තෝරා කරත්තයට දමන්න. මුදල් බාරදීමේදී හෝ බැංකු තැන්පතුවෙන් ගෙවන්න.",
@@ -133,6 +144,7 @@ const dictionary = {
       returns: "ආපසු භාරගැනීම",
       privacy: "පෞද්ගලිකත්වය",
       terms: "කොන්දේසි",
+      track: "ඇණවුම සොයන්න",
       pay: "මුදල් බාරදීමේදී සහ බැංකු තැන්පතු",
       rights: "සියලු හිමිකම් ඇවිරිණි.",
     },

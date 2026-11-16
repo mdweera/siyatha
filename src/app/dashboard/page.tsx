@@ -60,6 +60,14 @@ export default async function DashboardPage() {
                     <p className="mt-1 text-sm text-[var(--muted)]">
                       {new Date(order.createdAt).toLocaleString("en-LK")} · Rs {Number(order.totalAmount || 0).toLocaleString("en-LK")}
                     </p>
+                    {order.trackingCode ? (
+                      <p className="mt-1 text-sm font-semibold">
+                        Tracking:{" "}
+                        <Link href={`/track?code=${encodeURIComponent(String(order.trackingCode))}`} className="underline">
+                          {String(order.trackingCode)}
+                        </Link>
+                      </p>
+                    ) : null}
                   </div>
                   <Link href={`/order-confirmation/${order._id}`} className="text-sm font-semibold underline">
                     View order

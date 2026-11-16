@@ -9,6 +9,7 @@ import { findFinish, findPrintSize, printUnitPrice } from "@/lib/storefront";
 import { quoteDelivery } from "@/lib/delivery";
 import { getShopSettings } from "@/lib/shopDelivery";
 import { movePrintToOrder } from "@/lib/cloudinaryPrints";
+import { makeTrackingCode } from "@/lib/trackingCode";
 
 type CheckoutItemInput = {
   productId?: string;
@@ -168,6 +169,15 @@ export async function POST(request: NextRequest) {
       }
     }
 
+    let trackingCode = makeTrackingCode();
+    for (let attempt = 0; attempt < 5; attempt += 1) {
+      const clash = await Order.exists({ trackingCode });
+      if (!clash) {
+        break;
+      }
+      trackingCode = makeTrackingCode();
+    }
+
     const order = new Order({
       userId: session?.user?.id,
       customerName: `${firstName} ${lastName}`.trim(),
@@ -178,6 +188,7 @@ export async function POST(request: NextRequest) {
       totalAmount: deliveryQuote.total,
       paymentMethod,
       status: "pending",
+      trackingCode,
       ...(printItems.length > 0 ? { printStep: "received" as const } : {}),
       orderNumber,
     });

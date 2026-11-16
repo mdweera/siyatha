@@ -3,13 +3,14 @@
 import Link from "next/link";
 import Image from "next/image";
 import { useSession, signOut } from "next-auth/react";
-import { LogOut, Menu, Search, ShoppingCart, User as UserIcon, X } from "lucide-react";
+import { LogOut, Menu, PackageSearch, Search, ShoppingCart, User as UserIcon, X } from "lucide-react";
 import { useCartStore } from "@/store/useCartStore";
 import { useEffect, useState } from "react";
 import { usePathname, useRouter } from "next/navigation";
 import LanguageSwitch from "@/components/LanguageSwitch";
 import { useLang } from "@/components/LanguageProvider";
 import { t } from "@/lib/i18n";
+import { signalNavigationPending } from "@/lib/navigationPending";
 
 const links = [
   { href: "/photo-prints", key: "prints" },
@@ -45,6 +46,7 @@ export default function Navbar() {
   const submitSearch = (event: React.FormEvent) => {
     event.preventDefault();
     const q = query.trim();
+    signalNavigationPending(copy.search);
     router.push(q ? `/shop?q=${encodeURIComponent(q)}` : "/shop");
   };
 
@@ -91,6 +93,14 @@ export default function Navbar() {
           <div className="hidden sm:block">
             <LanguageSwitch />
           </div>
+          <Link
+            href="/track"
+            className="hidden h-11 items-center gap-2 rounded-[12px] px-3 text-sm font-semibold no-underline hover:bg-[var(--yellow-tint)] md:inline-flex"
+            aria-label={copy.track}
+          >
+            <PackageSearch size={16} />
+            {copy.track}
+          </Link>
           {!loading && !session ? (
             <Link href="/login" className="hidden h-11 items-center rounded-[12px] px-3 text-sm font-semibold no-underline hover:bg-[var(--yellow-tint)] md:inline-flex">
               {copy.login}
@@ -148,6 +158,9 @@ export default function Navbar() {
                 {copy[link.key]}
               </Link>
             ))}
+            <Link href="/track" className="rounded-[12px] px-3 py-3 text-base font-semibold no-underline hover:bg-[var(--yellow-tint)]">
+              {copy.track}
+            </Link>
             {!loading && !session ? (
               <Link href="/login" className="rounded-[12px] px-3 py-3 text-base font-semibold no-underline hover:bg-[var(--yellow-tint)]">
                 {copy.login}

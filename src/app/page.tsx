@@ -1,6 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
-import { ArrowRight, Camera, Clock3, MessageCircle, Package, Palette, ShieldCheck, Truck } from "lucide-react";
+import { ArrowRight, Camera, Clock3, MessageCircle, Package, PackageSearch, Palette, ShieldCheck, Truck } from "lucide-react";
 import HeroCarousel from "@/components/home/HeroCarousel";
 import { getShopSettings } from "@/lib/shopDelivery";
 import { CUSTOMER_REVIEWS } from "@/lib/customerReviews";
@@ -123,6 +123,24 @@ export default async function HomePage() {
               </div>
             </Link>
           ))}
+          </div>
+        </div>
+      </section>
+
+      <section className="border-t-8 border-[#00A36A] bg-[#fff8ee]">
+        <div className="mx-auto flex w-full max-w-7xl flex-col gap-5 px-4 py-14 sm:px-6 lg:flex-row lg:items-center lg:justify-between lg:px-8">
+          <div className="max-w-2xl">
+            <p className="text-xs font-bold uppercase tracking-[0.16em] text-[#00A36A]">Tracking</p>
+            <h2 className="mt-2 text-3xl font-bold">{copy.trackTitle}</h2>
+            <p className="mt-2 text-sm leading-6 text-[var(--muted)]">{copy.trackBody}</p>
+          </div>
+          <div className="flex flex-wrap gap-3">
+            <Link href="/track" className="btn-primary no-underline">
+              <PackageSearch size={16} /> {copy.trackCta}
+            </Link>
+            <Link href="/login?callbackUrl=/dashboard" className="btn-secondary no-underline">
+              {copy.trackLogin}
+            </Link>
           </div>
         </div>
       </section>

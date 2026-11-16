@@ -8,6 +8,7 @@ import { useCartStore } from "@/store/useCartStore";
 import { trackEvent } from "@/lib/analytics";
 import { croppedPrintFile } from "@/lib/cropPrint";
 import { printFileExtension } from "@/lib/printFiles";
+import { signalNavigationPending } from "@/lib/navigationPending";
 import {
   FINISHES,
   PRINT_FAMILIES,
@@ -277,6 +278,7 @@ export default function PrintStudio({ initialFamily, initialSize }: PrintStudioP
         });
       }
 
+      signalNavigationPending("Opening cart");
       router.push("/cart");
     } catch (uploadError) {
       setError(uploadError instanceof Error ? uploadError.message : "Upload failed. Please try again.");

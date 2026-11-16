@@ -7,6 +7,7 @@ import Link from "next/link";
 import { AlertCircle, Lock, Phone } from "lucide-react";
 import { useSearchParams } from "next/navigation";
 import { Suspense } from "react";
+import { signalNavigationPending } from "@/lib/navigationPending";
 
 function LoginForm() {
   const [username, setUsername] = useState("");
@@ -33,8 +34,9 @@ function LoginForm() {
     if (res?.error) {
       setError("Invalid email/phone or password.");
     } else {
-      // Redirect handled by matching middleware (dashboard or admin)
-      router.push("/");
+      const callbackUrl = searchParams.get("callbackUrl") || "/";
+      signalNavigationPending("Opening account");
+      router.push(callbackUrl);
       router.refresh();
     }
   };

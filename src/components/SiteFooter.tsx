@@ -20,6 +20,7 @@ export default function SiteFooter() {
         <div>
           <p className="text-sm font-bold">{copy.policies}</p>
           <ul className="mt-3 space-y-2 text-sm">
+            <li><Link href="/track" className="text-white underline">{copy.track}</Link></li>
             <li><Link href="/shipping" className="text-white underline">{copy.shipping}</Link></li>
             <li><Link href="/returns" className="text-white underline">{copy.returns}</Link></li>
             <li><Link href="/privacy" className="text-white underline">{copy.privacy}</Link></li>

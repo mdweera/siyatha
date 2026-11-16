@@ -12,6 +12,7 @@ import ShippingNotice from "@/components/ShippingNotice";
 import OrderBar from "@/components/cart/OrderBar";
 import PrintPriceSync from "@/components/PrintPriceSync";
 import SiteFooter from "@/components/SiteFooter";
+import NavigationFeedback from "@/components/NavigationFeedback";
 import { getLang } from "@/lib/site";
 
 const sora = Sora({
@@ -58,6 +59,7 @@ export default async function RootLayout({
             <PrintPriceSync />
             <ShippingNotice />
             <Navbar />
+            <NavigationFeedback />
             <main className="flex flex-grow flex-col">{children}</main>
             <WelcomePopup />
             <SiteFooter />

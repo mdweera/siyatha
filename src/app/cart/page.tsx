@@ -7,6 +7,7 @@ import { Minus, PhoneCall, Plus, Trash2 } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useState } from "react";
+import FreeDeliveryBanner from "@/components/cart/FreeDeliveryBanner";
 
 export default function CartPage() {
   const { items, removeFromCart, updateQuantity, totalPrice } = useCartStore();
@@ -40,6 +41,14 @@ export default function CartPage() {
   return (
     <div className="mx-auto w-full max-w-5xl px-4 py-8">
       <h1 className="mb-8 font-display text-3xl font-black tracking-tight text-slate-900">Shopping cart</h1>
+      {items.length > 0 ? (
+        <FreeDeliveryBanner
+          remaining={quote.remaining}
+          threshold={quote.threshold}
+          charge={quote.charge}
+          storageKey="siyatha-cart-free-delivery"
+        />
+      ) : null}
 
       {items.length === 0 ? (
         <div className="surface-card rounded-[1.75rem] p-12 text-center">

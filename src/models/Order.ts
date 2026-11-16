@@ -41,6 +41,7 @@ export interface IOrder extends mongoose.Document {
     postalCode: string;
     notes?: string;
   };
+  trackingCode?: string;
   trackingNumber?: string;
   courierService?: string;
   createdAt: Date;
@@ -85,6 +86,7 @@ const OrderSchema = new mongoose.Schema(
       postalCode: { type: String, required: true },
       notes: { type: String },
     },
+    trackingCode: { type: String, unique: true, sparse: true },
     trackingNumber: { type: String },
     courierService: { type: String },
   },
@@ -97,5 +99,6 @@ const OrderSchema = new mongoose.Schema(
 // Indexes for performance
 OrderSchema.index({ userId: 1, createdAt: -1 });
 OrderSchema.index({ status: 1 });
+OrderSchema.index({ trackingCode: 1 });
 
 export default mongoose.models.Order || mongoose.model<IOrder>('Order', OrderSchema);
