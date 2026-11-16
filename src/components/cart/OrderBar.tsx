@@ -44,7 +44,7 @@ export default function OrderBar() {
 
   return (
     <div className="fixed inset-x-0 bottom-0 z-40 border-t border-[#CD7DA2]/30 bg-white/95 shadow-[0_-8px_30px_rgba(104,24,120,0.12)] backdrop-blur">
-      <div className="mx-auto flex w-full max-w-7xl items-center gap-3 py-2.5 pl-20 pr-4">
+      <div className="mx-auto flex w-full max-w-7xl items-center gap-3 py-2.5 pl-16 pr-4">
         <div className="min-w-0 flex-1">
           <p className="truncate text-sm font-semibold text-slate-800">
             {count === 0 ? "Cart" : `${count} item${count === 1 ? "" : "s"}`}

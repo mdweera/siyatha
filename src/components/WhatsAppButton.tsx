@@ -32,7 +32,7 @@ export default function WhatsAppButton() {
   return (
     <>
       {open && (
-        <div className="fixed bottom-36 left-4 z-50 w-[min(92vw,380px)]">
+        <div className="fixed bottom-24 left-3 z-50 w-[min(92vw,380px)]">
           <div className="overflow-hidden rounded-3xl border border-slate-200 bg-white shadow-2xl shadow-slate-200/70">
             <div className="flex items-center justify-between gap-3 border-b border-slate-100 px-5 py-4">
               <div className="flex items-center gap-3">
@@ -91,7 +91,7 @@ export default function WhatsAppButton() {
       <button
         type="button"
         onClick={() => setOpen((prev) => !prev)}
-        className="fixed bottom-[4.6rem] left-4 z-50 flex h-12 w-12 items-center justify-center rounded-full bg-gradient-to-br from-emerald-500 to-green-600 text-white shadow-xl shadow-emerald-300/60 transition-transform hover:scale-105"
+        className="fixed bottom-2.5 left-3 z-50 flex h-11 w-11 items-center justify-center rounded-full bg-gradient-to-br from-emerald-500 to-green-600 text-white shadow-lg shadow-emerald-300/50 transition-transform hover:scale-105"
         aria-label={open ? "Close chat" : "Open chat"}
       >
         <span className="absolute inset-0 rounded-full border border-emerald-300/60 animate-ping" />
