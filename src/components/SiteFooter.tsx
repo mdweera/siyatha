@@ -79,7 +79,7 @@ export default function SiteFooter() {
               Facebook
             </a>
           </p>
-          <p>Courier across Sri Lanka</p>
+          <p>Deliver across Sri Lanka</p>
         </div>
       </div>
       <div className="border-t border-white/10 px-4 py-4 text-xs text-white/70 sm:px-6 lg:px-8">

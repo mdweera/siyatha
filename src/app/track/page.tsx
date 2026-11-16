@@ -95,7 +95,17 @@ function TrackForm() {
             id="tracking-code"
             value={code}
             onChange={(event) => setCode(event.target.value.toUpperCase())}
+            onKeyDown={(event) => {
+              if (event.key === "Escape") {
+                event.preventDefault();
+                setCode("");
+                setError("");
+                event.currentTarget.blur();
+              }
+            }}
             placeholder="SY-XXXXXX"
+            aria-keyshortcuts="Escape"
+            autoComplete="off"
             className="min-w-0 flex-1 rounded-xl border border-[var(--line)] px-3 py-3 text-sm uppercase"
           />
           <button type="submit" className="btn-primary" disabled={loading}>

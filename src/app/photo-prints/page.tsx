@@ -70,7 +70,7 @@ export default async function PhotoPrintsPage() {
             </p>
             <h1 className="mt-4 max-w-3xl font-display text-4xl font-black leading-tight text-slate-900 sm:text-5xl">
               Send your photos. We ship the prints within{" "}
-              <span className="mx-1 inline-flex h-10 w-10 translate-y-[-2px] items-center justify-center rounded-full bg-[#F2B400] align-middle text-2xl font-black text-[#111] sm:h-11 sm:w-11 sm:text-3xl">
+              <span className="mx-1 inline-flex h-10 w-10 translate-y-[-2px] items-center justify-center rounded-full bg-[#681878] align-middle text-2xl font-black text-white sm:h-11 sm:w-11 sm:text-3xl">
                 1
               </span>{" "}
               business day.
@@ -98,10 +98,10 @@ export default async function PhotoPrintsPage() {
               <Image src="/carousel-01.webp" alt="Printed photos of family, travel, and pets" fill className="object-cover" sizes="(max-width: 1024px) 100vw, 40vw" priority />
             </div>
             <div className="relative aspect-[4/3] overflow-hidden rounded-[1.25rem]">
-              <Image src="/print-photos/family.jpg" alt="A family photo ready to print" fill className="object-cover" sizes="20vw" />
+              <Image src="/carousel-04.jpg" alt="Birthday photo prints" fill className="object-cover" sizes="20vw" />
             </div>
             <div className="relative aspect-[4/3] overflow-hidden rounded-[1.25rem]">
-              <Image src="/print-photos/cards.jpg" alt="Photo cards printed for a birthday" fill className="object-cover" sizes="20vw" />
+              <Image src="/carousel-03.jpg" alt="Photo print sizes laid out on a table" fill className="object-cover" sizes="20vw" />
             </div>
           </div>
         </section>

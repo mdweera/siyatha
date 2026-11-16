@@ -380,6 +380,19 @@ export default function ShopClient({
               placeholder="Search product, SKU, brand..."
               value={searchTerm}
               onChange={(event) => setSearchTerm(event.target.value)}
+              onKeyDown={(event) => {
+                if (event.key === "Escape") {
+                  event.preventDefault();
+                  setSearchTerm("");
+                  event.currentTarget.blur();
+                }
+                if (event.key === "Enter") {
+                  event.preventDefault();
+                  setVisibleCount(12);
+                  event.currentTarget.blur();
+                }
+              }}
+              aria-keyshortcuts="Escape Enter"
               className="w-full rounded-2xl border border-slate-200 bg-white py-3 pl-10 pr-4 text-sm text-slate-700 outline-none transition focus:border-cyan-300 focus:ring-2 focus:ring-cyan-100"
             />
           </label>

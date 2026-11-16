@@ -6,12 +6,13 @@ import { useSession, signOut } from "next-auth/react";
 import { LogOut, Menu, PackageSearch, Search, ShoppingCart, User as UserIcon, X } from "lucide-react";
 import { useCartStore } from "@/store/useCartStore";
 import { useEffect, useRef, useState } from "react";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import LanguageSwitch from "@/components/LanguageSwitch";
 import { useLang } from "@/components/LanguageProvider";
 import { t } from "@/lib/i18n";
 import LoginButton from "@/components/auth/LoginButton";
 import { formatRs } from "@/lib/storefront";
+import { isTypingTarget } from "@/lib/keyboard";
 
 const links = [
   { href: "/photo-prints", key: "prints" },
@@ -32,6 +33,7 @@ export default function Navbar() {
   const { data: session, status } = useSession();
   const loading = status === "loading";
   const pathname = usePathname();
+  const router = useRouter();
   const lang = useLang();
   const copy = t(lang).nav;
   const items = useCartStore((state) => state.items);
@@ -74,7 +76,6 @@ export default function Navbar() {
       setSearching(false);
       return;
     }
-
     let cancelled = false;
     setSearching(true);
     const timer = window.setTimeout(() => {
@@ -102,6 +103,44 @@ export default function Navbar() {
       window.clearTimeout(timer);
     };
   }, [query, searchOpen]);
+
+  useEffect(() => {
+    const onKey = (event: KeyboardEvent) => {
+      if (event.defaultPrevented || isTypingTarget(event.target)) {
+        return;
+      }
+
+      const opensSearch =
+        event.key === "/" || ((event.metaKey || event.ctrlKey) && event.key.toLowerCase() === "k");
+      if (opensSearch) {
+        event.preventDefault();
+        setSearchOpen(true);
+      }
+    };
+
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, []);
+
+  const closeSearch = () => {
+    setSearchOpen(false);
+    setQuery("");
+    setHits([]);
+  };
+
+  const openSearch = () => {
+    const trimmed = query.trim();
+    if (!trimmed) {
+      return;
+    }
+
+    if (hits.length > 0) {
+      router.push(`/shop/${hits[0]._id}`);
+    } else {
+      router.push(`/shop?q=${encodeURIComponent(trimmed)}`);
+    }
+    closeSearch();
+  };
 
   const cartItemCount = mounted ? items.reduce((acc, item) => acc + item.quantity, 0) : 0;
   const dashboardHref = session?.user.role === "ADMIN" || session?.user.role === "STAFF" ? "/admin" : "/dashboard";
@@ -142,12 +181,13 @@ export default function Navbar() {
           <div className="relative" ref={searchRef}>
             <button
               type="button"
-              onClick={() => setSearchOpen((open) => !open)}
+              onClick={() => (searchOpen ? closeSearch() : setSearchOpen(true))}
               className={`inline-flex h-10 w-10 items-center justify-center rounded-[12px] border border-[var(--line)] sm:h-11 sm:w-11 ${
                 searchOpen ? "bg-[var(--yellow)]" : "hover:bg-[var(--yellow-tint)]"
               }`}
               aria-label={copy.search}
               aria-expanded={searchOpen}
+              aria-keyshortcuts="/ Control+K"
             >
               {searchOpen ? <X size={18} /> : <Search size={18} />}
             </button>
@@ -162,10 +202,28 @@ export default function Navbar() {
                       ref={inputRef}
                       value={query}
                       onChange={(event) => setQuery(event.target.value)}
+                      onKeyDown={(event) => {
+                        if (event.key === "Escape") {
+                          event.preventDefault();
+                          closeSearch();
+                          event.currentTarget.blur();
+                        }
+                        if (event.key === "Enter") {
+                          event.preventDefault();
+                          openSearch();
+                        }
+                      }}
                       placeholder={copy.search}
                       className="h-11 w-full rounded-xl border border-[var(--line)] bg-[var(--page)] pl-9 pr-3 text-sm"
                     />
                   </label>
+                  <p className="mt-2 flex flex-wrap items-center gap-1.5 text-[11px] text-[var(--muted)]">
+                    <kbd className="rounded-md border border-[var(--line)] bg-white px-1.5 py-0.5 font-semibold">Enter</kbd>
+                    opens the first match
+                    <span aria-hidden="true">·</span>
+                    <kbd className="rounded-md border border-[var(--line)] bg-white px-1.5 py-0.5 font-semibold">Esc</kbd>
+                    closes
+                  </p>
                 </div>
                 <div className="max-h-80 overflow-y-auto">
                   {searching ? <p className="px-4 py-3 text-sm text-[var(--muted)]">Searching…</p> : null}
@@ -179,7 +237,7 @@ export default function Navbar() {
                         <Link
                           href={`/shop/${hit._id}`}
                           className="flex items-center gap-3 px-3 py-2.5 no-underline hover:bg-[var(--yellow-tint)]"
-                          onClick={() => setSearchOpen(false)}
+                          onClick={closeSearch}
                         >
                           <span className="relative h-12 w-12 shrink-0 overflow-hidden rounded-xl bg-[var(--page)]">
                             {hit.image ? (

@@ -9,6 +9,7 @@ import { trackEvent } from "@/lib/analytics";
 import { croppedPrintFile } from "@/lib/cropPrint";
 import { printFileExtension } from "@/lib/printFiles";
 import { signalNavigationPending } from "@/lib/navigationPending";
+import { isTypingTarget } from "@/lib/keyboard";
 import {
   FINISHES,
   PRINT_FAMILIES,
@@ -296,6 +297,39 @@ export default function PrintStudio({ initialFamily, initialSize }: PrintStudioP
     total,
   });
 
+  useEffect(() => {
+    const onKey = (event: KeyboardEvent) => {
+      if (event.defaultPrevented || uploading) {
+        return;
+      }
+
+      const typing = isTypingTarget(event.target);
+      if (event.key === "Escape" && !typing && step > 0) {
+        event.preventDefault();
+        goBack();
+        return;
+      }
+
+      if (event.key !== "Enter" || typing) {
+        return;
+      }
+
+      if (step === 3 && photos.length > 0) {
+        event.preventDefault();
+        void addOrderToCart();
+        return;
+      }
+
+      if ((step === 1 || step === 2) && photos.length > 0) {
+        event.preventDefault();
+        goNext();
+      }
+    };
+
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, [photos.length, step, uploading]);
+
   const steps = ["Print", "Size", "Photos", "Review"];
 
   return (
@@ -330,6 +364,14 @@ export default function PrintStudio({ initialFamily, initialSize }: PrintStudioP
           );
         })}
       </ol>
+
+      <p className="mt-2 flex flex-wrap items-center gap-1.5 text-[11px] text-[var(--muted)]">
+        <kbd className="rounded-md border border-[var(--line)] bg-white px-1.5 py-0.5 font-semibold">Enter</kbd>
+        continues
+        <span aria-hidden="true">·</span>
+        <kbd className="rounded-md border border-[var(--line)] bg-white px-1.5 py-0.5 font-semibold">Esc</kbd>
+        goes back a step
+      </p>
 
       <div className="mt-5">
         {step === 0 ? (

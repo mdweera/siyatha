@@ -123,7 +123,7 @@ export default function WhoAreWePage() {
                 <Truck className="mt-0.5 h-4 w-4 shrink-0 text-[#681878]" />
                 <div>
                   <p className="font-semibold text-[var(--ink)]">Delivery</p>
-                  <p className="text-[var(--muted)]">Courier across Sri Lanka</p>
+                  <p className="text-[var(--muted)]">Deliver across Sri Lanka</p>
                 </div>
               </div>
 
