@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import Link from "next/link";
 import { useLang } from "@/components/LanguageProvider";
 import { t } from "@/lib/i18n";
@@ -14,7 +15,18 @@ export default function SiteFooter() {
     <footer className="site-footer mt-auto border-t-4 border-[#F2B400] bg-[#2b1636] text-white">
       <div className="mx-auto grid w-full max-w-7xl gap-8 px-4 py-10 sm:px-6 md:grid-cols-4 lg:px-8">
         <div className="md:col-span-2">
-          <p className="font-sinhala text-2xl font-bold leading-[1.85] text-white">සෑමවිටම හොඳම මිල ඔබට</p>
+          <div className="flex items-center gap-3">
+            <span className="relative h-11 w-11 overflow-hidden rounded-[12px] bg-white">
+              <Image src="/logo.jpg" alt="" fill className="object-cover" sizes="44px" />
+            </span>
+            <div>
+              <p className="text-base font-bold leading-tight text-white">Siyatha Online</p>
+              <p className="text-xs font-semibold uppercase tracking-[0.12em] text-white/70">
+                {lang === "si" ? "ඡායාරූප මුද්‍රණ" : "Photo prints"}
+              </p>
+            </div>
+          </div>
+          <p className="font-sinhala mt-4 text-2xl font-bold leading-[1.85] text-white">සෑමවිටම හොඳම මිල ඔබට</p>
           <p className="mt-3 max-w-md text-sm leading-7 text-white/85">{copy.order}</p>
           <p className="mt-3 text-sm text-white/85">{copy.pay}</p>
         </div>
