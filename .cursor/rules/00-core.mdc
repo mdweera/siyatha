@@ -1,0 +1,14 @@
+---
+description: Branch, host, and build rules for Siyatha Online.
+alwaysApply: true
+---
+
+# Core — siyatha_online_fe
+
+Work and push **`main`**. Do not force-push.
+
+This app is https://siyatha.lk on Vercel. The shop counter is https://pos.siyatha.lk (`cloud_pos`). Do not commit `.env*`, `next-env.d.ts`, lockfile noise, or customer files in `public/uploads/prints`.
+
+`dbConnect()` in `src/lib/mongodb.ts` opens Mongo on first use. Do not throw for a missing `MONGODB_URI` while a module is imported. Vercel collects API routes during `next build` before that variable is required. The live project still needs `MONGODB_URI`, `NEXTAUTH_SECRET`, and `NEXTAUTH_URL`.
+
+Free delivery is read from Cloud POS `Settings` in `pos_app_sl`. Print prices stay in `src/lib/storefront.ts`. Commit only when asked. Commit messages are one line unless the user asks for a body.

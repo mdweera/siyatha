@@ -100,6 +100,34 @@ export default function PhotoPrintsPage() {
         </section>
 
         <section>
+          <h2 className="font-display text-3xl font-bold text-slate-900">Start with a size</h2>
+          <p className="mt-2 max-w-2xl text-sm leading-6 text-slate-600">
+            These are the prints people order first. The price is per picture, and the upload page shows the total before you pay.
+          </p>
+          <div className="mt-5 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+            {["4x6", "5x7", "passport-8", "8x10"].map((id) => {
+              const size = PRINT_SIZES.find((item) => item.id === id);
+              if (!size) {
+                return null;
+              }
+              return (
+                <Link
+                  key={size.id}
+                  href={`/photo-prints/order?size=${size.id}`}
+                  className="surface-card flex flex-col rounded-[1.5rem] p-5 transition hover:-translate-y-0.5"
+                >
+                  <p className="text-xs font-semibold uppercase tracking-[0.14em] text-[#B10C53]">{size.cm}</p>
+                  <h3 className="mt-2 font-display text-2xl font-bold text-slate-900">{size.label}</h3>
+                  <p className="mt-2 flex-1 text-sm leading-6 text-slate-600">{size.blurb}</p>
+                  <p className="mt-4 font-display text-3xl font-black text-slate-900">{formatRs(size.price)}</p>
+                  <p className="mt-1 text-xs text-slate-500">Sharp from about {size.pixels}</p>
+                </Link>
+              );
+            })}
+          </div>
+        </section>
+
+        <section>
           <h2 className="font-display text-3xl font-bold text-slate-900">Choose a print</h2>
           <div className="mt-5 grid gap-4 md:grid-cols-2">
             {PRINT_FAMILIES.map((family) => {

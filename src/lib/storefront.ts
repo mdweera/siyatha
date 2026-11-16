@@ -15,6 +15,7 @@ export type PrintSize = {
   cm: string;
   price: number;
   blurb: string;
+  pixels: string;
 };
 
 export type CategoryTile = {
@@ -171,18 +172,18 @@ export const PRINT_FAMILIES: Array<{
 ];
 
 export const PRINT_SIZES: PrintSize[] = [
-  { id: "4x6", family: "copies", label: "4×6 in", cm: "10×15 cm", price: 30, blurb: "Album size. The usual photo print." },
-  { id: "5x7", family: "copies", label: "5×7 in", cm: "13×18 cm", price: 55, blurb: "A little larger for a desk frame." },
-  { id: "6x8", family: "copies", label: "6×8 in", cm: "15×20 cm", price: 80, blurb: "Group photos and travel shots." },
-  { id: "8x10", family: "enlargements", label: "8×10 in", cm: "20×25 cm", price: 140, blurb: "Frame size for a wall or a gift." },
-  { id: "8x12", family: "enlargements", label: "8×12 in", cm: "20×30 cm", price: 180, blurb: "Wide scenes and family groups." },
-  { id: "a4", family: "enlargements", label: "A4", cm: "21×29.7 cm", price: 220, blurb: "Poster-style print on photo paper." },
-  { id: "a3", family: "enlargements", label: "A3", cm: "29.7×42 cm", price: 420, blurb: "The large print. Best from a clear photo." },
-  { id: "passport-8", family: "passport", label: "Passport sheet", cm: "8 photos", price: 250, blurb: "Eight matching photos on one sheet." },
-  { id: "visa-6", family: "passport", label: "Visa sheet", cm: "6 photos", price: 320, blurb: "Six photos. Confirm the official size first." },
-  { id: "card-birthday", family: "cards", label: "Birthday card", cm: "5×7 in", price: 95, blurb: "Your photo on a birthday card." },
-  { id: "card-thanks", family: "cards", label: "Thank-you card", cm: "5×7 in", price: 95, blurb: "A card for orders, weddings, and gifts." },
-  { id: "card-invite", family: "cards", label: "Invitation", cm: "A5", price: 85, blurb: "Party and home invitations." },
+  { id: "4x6", family: "copies", label: "4×6 in", cm: "10×15 cm", price: 30, blurb: "Album size. The usual photo print.", pixels: "1200×1800 px" },
+  { id: "5x7", family: "copies", label: "5×7 in", cm: "13×18 cm", price: 55, blurb: "A little larger for a desk frame.", pixels: "1500×2100 px" },
+  { id: "6x8", family: "copies", label: "6×8 in", cm: "15×20 cm", price: 80, blurb: "Group photos and travel shots.", pixels: "1800×2400 px" },
+  { id: "8x10", family: "enlargements", label: "8×10 in", cm: "20×25 cm", price: 140, blurb: "Frame size for a wall or a gift.", pixels: "2400×3000 px" },
+  { id: "8x12", family: "enlargements", label: "8×12 in", cm: "20×30 cm", price: 180, blurb: "Wide scenes and family groups.", pixels: "2400×3600 px" },
+  { id: "a4", family: "enlargements", label: "A4", cm: "21×29.7 cm", price: 220, blurb: "Poster-style print on photo paper.", pixels: "2480×3508 px" },
+  { id: "a3", family: "enlargements", label: "A3", cm: "29.7×42 cm", price: 420, blurb: "The large print. Best from a clear photo.", pixels: "3508×4961 px" },
+  { id: "passport-8", family: "passport", label: "Passport sheet", cm: "8 photos", price: 250, blurb: "Eight matching photos on one sheet.", pixels: "600×800 px for the face" },
+  { id: "visa-6", family: "passport", label: "Visa sheet", cm: "6 photos", price: 320, blurb: "Six photos. Confirm the official size first.", pixels: "600×800 px for the face" },
+  { id: "card-birthday", family: "cards", label: "Birthday card", cm: "5×7 in", price: 95, blurb: "Your photo on a birthday card.", pixels: "1500×2100 px" },
+  { id: "card-thanks", family: "cards", label: "Thank-you card", cm: "5×7 in", price: 95, blurb: "A card for orders, weddings, and gifts.", pixels: "1500×2100 px" },
+  { id: "card-invite", family: "cards", label: "Invitation", cm: "A5", price: 85, blurb: "Party and home invitations.", pixels: "1748×2480 px" },
 ];
 
 export const FINISHES: Array<{ id: FinishId; title: string; text: string }> = [
@@ -210,7 +211,7 @@ export const PRINT_FAQS: Array<{ question: string; answer: string }> = [
   {
     question: "What photo files can I upload?",
     answer:
-      "JPG, PNG, and WEBP from a phone or camera. Each file can be up to 8 MB. We print borderless, so leave a little space around faces.",
+      "JPG, PNG, and WEBP from a phone or camera. Each file can be up to 8 MB. A sharp 4×6 is about 1200×1800 pixels. Smaller phone photos still print; we message you if the picture will look soft. We print borderless, so leave a little space around faces.",
   },
   {
     question: "Do you print passport photos?",

@@ -1,40 +1,38 @@
-import mongoose from 'mongoose';
+import mongoose from "mongoose";
 
-const MONGODB_URI = process.env.MONGODB_URI;
+type MongooseCache = {
+  conn: typeof mongoose | null;
+  promise: Promise<typeof mongoose> | null;
+};
 
-if (!MONGODB_URI) {
-  throw new Error(
-    'Please define the MONGODB_URI environment variable inside .env.local'
-  );
-}
+const globalCache = global as typeof globalThis & { mongoose?: MongooseCache };
+const cached: MongooseCache = globalCache.mongoose ?? { conn: null, promise: null };
+globalCache.mongoose = cached;
 
 /**
- * Global is used here to maintain a cached connection across hot reloads
- * in development. This prevents connections growing exponentially
- * during API Route usage.
+ * Open the shop database on first use.
+ * Do not throw while the module is imported. Vercel collects route modules
+ * during `next build` before runtime env vars are required.
  */
-let cached = (global as any).mongoose;
+export default async function dbConnect(): Promise<typeof mongoose> {
+  const uri = process.env.MONGODB_URI?.trim();
+  if (!uri) {
+    throw new Error("Please define the MONGODB_URI environment variable.");
+  }
 
-if (!cached) {
-  cached = (global as any).mongoose = { conn: null, promise: null };
-}
-
-async function dbConnect() {
   if (cached.conn) {
     return cached.conn;
   }
 
   if (!cached.promise) {
-    const opts = {
-      bufferCommands: false,
-    };
-
-    cached.promise = mongoose.connect(MONGODB_URI as string, opts).then((mongoose) => {
-      return mongoose;
-    });
+    cached.promise = mongoose.connect(uri, { bufferCommands: false }).then((connection) => connection);
   }
-  cached.conn = await cached.promise;
-  return cached.conn;
-}
 
-export default dbConnect;
+  try {
+    cached.conn = await cached.promise;
+    return cached.conn;
+  } catch (error) {
+    cached.promise = null;
+    throw error;
+  }
+}

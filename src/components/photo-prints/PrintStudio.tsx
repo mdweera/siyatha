@@ -80,14 +80,17 @@ export default function PrintStudio({ initialFamily, initialSize }: PrintStudioP
     }
 
     if (!size || totalCopies < 12) {
-      return "Twelve copies of the same size save 10%. Thirty copies save 20%.";
+      const left = 12 - totalCopies;
+      return totalCopies === 0
+        ? "Twelve copies of the same size save 10%. Thirty copies save 20%."
+        : `Add ${left} more ${left === 1 ? "print" : "prints"} of this size for 10% off.`;
     }
 
     if (totalCopies >= 30) {
       return "Thirty or more copies: 20% off this size.";
     }
 
-    return "Twelve or more copies: 10% off this size.";
+    return `Add ${30 - totalCopies} more prints of this size for 20% off.`;
   }, [size, totalCopies]);
 
   const selectFamily = (nextFamily: PrintFamilyId) => {
@@ -274,7 +277,11 @@ export default function PrintStudio({ initialFamily, initialSize }: PrintStudioP
               );
             })}
           </div>
-          {size ? <p className="mt-3 text-sm text-slate-600">{size.blurb} Paper choice does not change the price.</p> : null}
+          {size ? (
+            <p className="mt-3 text-sm leading-6 text-slate-600">
+              {size.blurb} A sharp file is about {size.pixels}. Phone photos that are a bit smaller still print, and we message you if the picture will look soft. Paper choice does not change the price.
+            </p>
+          ) : null}
           <div className="mt-4 grid gap-2 sm:grid-cols-3">
             {FINISHES.map((item) => {
               const active = item.id === finishId;
@@ -420,6 +427,7 @@ export default function PrintStudio({ initialFamily, initialSize }: PrintStudioP
         <p className="mt-1 text-sm text-slate-600">
           {finish.title} photo paper{size ? ` · ${size.cm}` : ""}
         </p>
+        <p className="mt-2 text-sm font-semibold text-[#B10C53]">Ships within one business day</p>
         <dl className="mt-5 space-y-2 text-sm text-slate-700">
           <div className="flex justify-between">
             <dt>Photos</dt>

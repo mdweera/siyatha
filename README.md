@@ -1,36 +1,39 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Siyatha Online
 
-## Getting Started
+Public shop for [siyatha.lk](https://siyatha.lk). People upload photos to print, and they can buy packaging for online selling and craft materials for making at home. The shop counter is [pos.siyatha.lk](https://pos.siyatha.lk) (`cloud_pos`), which is a separate app.
 
-First, run the development server:
+Work and push `main`.
+
+## Run locally
 
 ```bash
+npm install
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Open [http://localhost:3000](http://localhost:3000).
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+Create `.env.local` and do not commit it. The app needs:
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+| Variable | Purpose |
+|---|---|
+| `MONGODB_URI` | This shop’s database (`siyatha_online_db`) |
+| `NEXTAUTH_SECRET` | Session signing secret |
+| `NEXTAUTH_URL` | Site origin, `http://localhost:3000` locally |
+| `CLOUD_POS_MONGODB_URI` | Optional. Cloud POS `Settings` for free delivery. If unset, `MONGODB_URI` is reused with the database name `pos_app_sl`. |
+| `NEXT_PUBLIC_WHATSAPP_NUMBER` | Optional. Defaults to the shop WhatsApp number. |
 
-## Learn More
+## Vercel
 
-To learn more about Next.js, take a look at the following resources:
+Set the same variables on the project. `next build` imports API routes while it collects pages, so missing `MONGODB_URI` must not crash that step. The database connection opens on the first request that needs it. The live site still needs `MONGODB_URI` or product and order pages have nothing to read.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+Customer photo files land in `public/uploads/prints` and stay out of git.
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## Shop
 
-## Deploy on Vercel
+- `/photo-prints` — prices, sizes, and paper. A sharp 4×6 is about 1200×1800 px.
+- `/photo-prints/order` — upload JPG, PNG, or WEBP and add prints to the cart.
+- `/packaging` and `/craft` — department shelves.
+- `/shop` — full catalog. `?dept=packaging` or `?dept=craft`.
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+Print prices live in `src/lib/storefront.ts`. Checkout prices a print from its size id. Free delivery uses Cloud POS `onlineFreeDeliveryAbove` (starting value Rs 1,000) and `onlineDefaultDeliveryCharge`. Photo prints ship within one business day. The shop address stays in the footer and on Who Are We.

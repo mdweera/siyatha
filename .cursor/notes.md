@@ -9,3 +9,5 @@
 - siyatha.lk is this repo. The shop counter is pos.siyatha.lk (`cloud_pos`).
 - The public site leads with photo prints (`/photo-prints`), seller packaging (`/packaging`), and craft materials (`/craft`). Prices and department keywords live in `src/lib/storefront.ts`.
 - Photo uploads are stored in `public/uploads/prints` and gitignored. Checkout prices print lines from the size id, not the client price.
+- Vercel build failed because `src/lib/mongodb.ts` threw while route modules were imported. `dbConnect()` now throws only when a request needs the database. The Vercel project still needs `MONGODB_URI`, `NEXTAUTH_SECRET`, and `NEXTAUTH_URL`.
+- Each print size in `src/lib/storefront.ts` has a `pixels` hint. The photo-print page leads with 4×6, 5×7, passport sheet, and 8×10.
