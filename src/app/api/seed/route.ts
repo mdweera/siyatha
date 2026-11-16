@@ -26,6 +26,7 @@ const seedProducts = [
     isPublishedOnline: true,
     warrantyPeriod: "1 Year Apple Care",
     specifications: { storage: "256GB", display: "6.7-inch OLED", chipset: "A17 Pro" },
+    budgetLane: "premium",
   },
   {
     name: "Samsung Galaxy S24 Ultra",
@@ -45,6 +46,7 @@ const seedProducts = [
     isPublishedOnline: true,
     warrantyPeriod: "1 Year Samsung Warranty",
     specifications: { storage: "256GB", display: "6.8-inch AMOLED", camera: "200MP" },
+    budgetLane: "premium",
   },
   {
     name: "Asus ROG Zephyrus G14",
@@ -64,6 +66,7 @@ const seedProducts = [
     isPublishedOnline: true,
     warrantyPeriod: "2 Years Asus Warranty",
     specifications: { ram: "16GB", storage: "1TB SSD", gpu: "RTX 4060" },
+    budgetLane: "premium",
   },
   {
     name: "MacBook Air M3 13-inch",
@@ -83,6 +86,7 @@ const seedProducts = [
     isPublishedOnline: true,
     warrantyPeriod: "1 Year Apple Warranty",
     specifications: { ram: "8GB", storage: "256GB SSD", chipset: "Apple M3" },
+    budgetLane: "premium",
   },
   {
     name: "Samsung 65 inch UHD 4K Smart TV",
@@ -102,6 +106,7 @@ const seedProducts = [
     isPublishedOnline: true,
     warrantyPeriod: "3 Years Panel Warranty",
     specifications: { resolution: "4K UHD", size: "65-inch", os: "Tizen" },
+    budgetLane: "best-products",
   },
   {
     name: "LG 55 inch OLED evo TV",
@@ -121,6 +126,7 @@ const seedProducts = [
     isPublishedOnline: true,
     warrantyPeriod: "2 Years LG Warranty",
     specifications: { resolution: "4K OLED", size: "55-inch", refreshRate: "120Hz" },
+    budgetLane: "premium",
   },
   {
     name: "Sony WH-1000XM5 Wireless Headphones",
@@ -140,6 +146,7 @@ const seedProducts = [
     isPublishedOnline: true,
     warrantyPeriod: "1 Year Agent Warranty",
     specifications: { type: "Over-Ear", battery: "30 Hours", connectivity: "Bluetooth 5.2" },
+    budgetLane: "best-products",
   },
   {
     name: "JBL Flip 6 Portable Speaker",

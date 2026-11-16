@@ -1,0 +1,17 @@
+# Structure — siyatha_online_fe
+
+Public site is siyatha.lk. Shop counter is pos.siyatha.lk.
+
+```
+src/app/page.tsx home — photo prints, packaging, craft
+src/app/photo-prints/ print landing (SEO)
+src/app/photo-prints/order/ upload studio
+src/app/packaging/ src/app/craft/ department pages
+src/app/shop/ full catalog, dept=packaging|craft
+src/app/api/photo-prints/upload/ saved under public/uploads/prints
+src/lib/storefront.ts prices, keywords, FAQ
+src/components/photo-prints/PrintStudio.tsx
+src/components/departments/DepartmentPage.tsx
+```
+
+Photo print prices and packaging/craft keywords stay in `src/lib/storefront.ts`. Do not add a second price list.
