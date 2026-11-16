@@ -46,7 +46,7 @@ export default function OrderBar() {
   const onCheckout = pathname.startsWith("/checkout");
 
   return (
-    <div className="fixed inset-x-0 bottom-0 z-40 border-t border-[#CD7DA2]/30 bg-white/95 shadow-[0_-8px_30px_rgba(104,24,120,0.12)] backdrop-blur">
+    <div className="fixed inset-x-0 bottom-0 z-40 border-t border-[#F2B400]/35 bg-gradient-to-t from-[#fff3c4]/90 via-[#fff8ee]/95 to-white/90 shadow-[0_-10px_28px_rgba(104,24,120,0.08)] backdrop-blur-md">
       <div className="mx-auto flex w-full max-w-7xl items-center gap-3 py-2.5 pl-16 pr-4">
         <div className="min-w-0 flex-1">
           <p className="truncate text-sm font-semibold text-slate-800">
