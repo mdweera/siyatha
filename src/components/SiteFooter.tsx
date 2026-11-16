@@ -9,7 +9,7 @@ import { SHOP_PHONE_DISPLAY, SHOP_PLACE } from "@/lib/storefront";
 export default function SiteFooter() {
   const lang = useLang();
   const copy = t(lang).footer;
-  const mapHref = "https://www.google.com/maps/search/?api=1&query=Kirimatiya+Batapola+Ambalangoda";
+  const mapHref = "/location";
 
   return (
     <footer className="site-footer mt-auto border-t-4 border-[#F2B400] bg-[#2b1636] text-white">
@@ -65,9 +65,9 @@ export default function SiteFooter() {
           <p>{copy.hours}</p>
           <p>{SHOP_PLACE}</p>
           <p>
-            <a className="footer-link" href={mapHref} target="_blank" rel="noreferrer">
+            <Link className="footer-link" href={mapHref}>
               Map
-            </a>
+            </Link>
           </p>
           <p>
             <a

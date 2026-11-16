@@ -1,140 +1,133 @@
 import Image from "next/image";
 import Link from "next/link";
-import { ArrowRight, BadgeCheck, Clock3, MapPin, PhoneCall } from "lucide-react";
+import { ArrowRight, Clock3, MapPin, MessageCircle, PhoneCall, Truck } from "lucide-react";
+import { SHOP_PHONE_DISPLAY, SHOP_PHONE_TEL, SHOP_PLACE, whatsappHref } from "@/lib/storefront";
 
 export const metadata = {
-  title: "Who we are",
-  description: "Siyatha prints photos, sells packaging for online sellers, and stocks craft materials in Kirimatiya, Batapola.",
+  title: "About us",
+  description:
+    "Siyatha Online prints photos, sells packaging for online sellers, and stocks craft materials in Kirimatiya, Batapola.",
   alternates: { canonical: "/who-are-we", languages: { en: "/who-are-we?lang=en", si: "/who-are-we?lang=si" } },
 };
 
-export default function WhoAreWePage() {
-  const values = [
-    {
-      title: "Fair Pricing",
-      text: "සෑමවිටම හොඳම මිල ඔබට. Prices stay on the page, and photo print prices can be checked before you upload.",
-    },
-    {
-      title: "Trusted Support",
-      text: "Phone and WhatsApp support stays with you after the purchase.",
-    },
-    {
-      title: "Curated Products",
-      text: "Everyday use products and seller essentials carefully selected for local needs.",
-    },
-  ];
+const MAP_EMBED = "https://maps.google.com/maps?q=Kirimatiya%2C%20Batapola%2C%20Ambalangoda&z=13&output=embed";
+const MAP_LINK = "https://maps.google.com/?q=Kirimatiya%2C+Batapola%2C+Ambalangoda";
 
+const VALUES = [
+  { title: "Fair pricing", text: "Photo print prices stay on the page, so you can check the cost before you upload." },
+  { title: "Support that answers", text: "Phone and WhatsApp stay open after you order. We message first if a file will crop badly." },
+  { title: "Made for local sellers", text: "Mailers, boxes, tape, and craft supplies chosen for people who sell and make at home." },
+];
+
+export default function WhoAreWePage() {
   return (
-    <div className="relative flex-grow overflow-hidden px-4 py-10 sm:px-6 lg:px-8">
-      <div className="relative mx-auto w-full max-w-7xl space-y-8">
-        <section className="overflow-hidden rounded-[2rem] bg-gradient-to-br from-[#DE2684] via-[#F2B400] to-[#F9E094] px-6 py-8 text-[#2b1636] sm:px-9 sm:py-10">
-          <div className="grid gap-8 lg:grid-cols-[1.2fr_1fr] lg:items-center">
+    <div className="bg-[var(--page)]">
+      <section className="bg-gradient-to-b from-[#fff3c4]/70 via-[#fff8ee] to-[var(--page)]">
+        <div className="mx-auto w-full max-w-5xl px-4 py-12 sm:px-6 sm:py-16 lg:px-8">
+          <div className="flex items-center gap-3">
+            <span className="relative h-12 w-12 overflow-hidden rounded-[14px] bg-white ring-1 ring-black/5">
+              <Image src="/logo.jpg" alt="" fill className="object-cover" sizes="48px" priority />
+            </span>
             <div>
-              <p className="inline-flex items-center gap-2 rounded-full border border-[#2b1636]/20 bg-white/50 px-3 py-1 text-xs font-semibold uppercase tracking-[0.16em]">
-                <BadgeCheck size={14} /> About Siyatha Online
-              </p>
-              <h1 className="mt-4 font-display text-3xl font-bold leading-tight sm:text-4xl lg:text-5xl">
-                Who we are
-              </h1>
-              <p className="mt-4 max-w-2xl text-sm leading-7 text-[#2b1636] sm:text-base">
-                Siyatha Online prints photos you upload, packs parcels for people who sell online, and stocks craft materials
-                for sewing, paper, and glue. We work from Kirimatiya, Batapola, and send orders across Sri Lanka.
-              </p>
-              <div className="mt-6 flex flex-wrap gap-3">
-                <Link
-                  href="/shop"
-                  className="btn-primary no-underline"
-                >
-                  Shop Now <ArrowRight size={16} />
+              <p className="text-sm font-bold leading-tight text-[var(--ink)]">Siyatha Online</p>
+              <p className="text-xs font-semibold uppercase tracking-[0.12em] text-[var(--muted)]">About us</p>
+            </div>
+          </div>
+
+          <h1 className="mt-8 max-w-3xl text-4xl font-bold leading-tight text-[var(--ink)] sm:text-5xl">
+            A small print and packaging shop in Batapola.
+          </h1>
+          <p className="mt-5 max-w-2xl text-base leading-8 text-[var(--muted)]">
+            We print the photos you upload, pack parcels for people who sell online, and keep craft materials for sewing,
+            paper, and glue. Orders leave Kirimatiya and travel across Sri Lanka by courier.
+          </p>
+          <p className="font-sinhala mt-4 text-xl font-bold leading-[1.85] text-[var(--ink)]">සෑමවිටම හොඳම මිල ඔබට</p>
+
+          <div className="mt-8 flex flex-wrap gap-3">
+            <Link href="/photo-prints/order" className="btn-primary no-underline">
+              Upload photos <ArrowRight size={16} />
+            </Link>
+            <a href={whatsappHref("Hello Siyatha, I have a question.")} className="btn-whatsapp no-underline" target="_blank" rel="noreferrer">
+              <MessageCircle size={16} /> WhatsApp
+            </a>
+          </div>
+        </div>
+      </section>
+
+      <section className="border-t border-[#F2B400]/20">
+        <div className="mx-auto w-full max-w-5xl px-4 py-12 sm:px-6 lg:px-8">
+          <h2 className="text-2xl font-bold">How we work</h2>
+          <div className="mt-6 divide-y divide-[#CD7DA2]/25">
+            {VALUES.map((item) => (
+              <div key={item.title} className="grid gap-2 py-6 sm:grid-cols-[14rem_1fr] sm:gap-6">
+                <h3 className="text-base font-bold text-[var(--ink)]">{item.title}</h3>
+                <p className="text-sm leading-7 text-[var(--muted)]">{item.text}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      <section className="border-t border-[#F2B400]/20 bg-white">
+        <div className="mx-auto w-full max-w-5xl px-4 py-12 sm:px-6 lg:px-8">
+          <h2 className="text-2xl font-bold">Find the shop</h2>
+          <p className="mt-2 text-sm leading-7 text-[var(--muted)]">{SHOP_PLACE}.</p>
+
+          <div className="mt-6 grid gap-8 lg:grid-cols-[1fr_18rem]">
+            <div className="overflow-hidden rounded-2xl ring-1 ring-black/10">
+              <iframe
+                title="Siyatha Online location map"
+                src={MAP_EMBED}
+                className="h-[320px] w-full sm:h-[380px]"
+                loading="lazy"
+                referrerPolicy="no-referrer-when-downgrade"
+              />
+            </div>
+
+            <div className="space-y-4 text-sm">
+              <div className="flex items-start gap-3">
+                <MapPin className="mt-0.5 h-4 w-4 shrink-0 text-[#681878]" />
+                <div>
+                  <p className="font-semibold text-[var(--ink)]">Address</p>
+                  <p className="text-[var(--muted)]">{SHOP_PLACE}</p>
+                </div>
+              </div>
+              <div className="flex items-start gap-3">
+                <PhoneCall className="mt-0.5 h-4 w-4 shrink-0 text-[#681878]" />
+                <div>
+                  <p className="font-semibold text-[var(--ink)]">Phone / WhatsApp</p>
+                  <a href={`tel:${SHOP_PHONE_TEL}`} className="text-[var(--muted)] underline decoration-[#F2B400] underline-offset-4">
+                    {SHOP_PHONE_DISPLAY}
+                  </a>
+                </div>
+              </div>
+              <div className="flex items-start gap-3">
+                <Clock3 className="mt-0.5 h-4 w-4 shrink-0 text-[#681878]" />
+                <div>
+                  <p className="font-semibold text-[var(--ink)]">Open</p>
+                  <p className="text-[var(--muted)]">Mon–Sat, 9.00 AM – 7.00 PM</p>
+                </div>
+              </div>
+              <div className="flex items-start gap-3">
+                <Truck className="mt-0.5 h-4 w-4 shrink-0 text-[#681878]" />
+                <div>
+                  <p className="font-semibold text-[var(--ink)]">Delivery</p>
+                  <p className="text-[var(--muted)]">Courier across Sri Lanka</p>
+                </div>
+              </div>
+
+              <div className="flex flex-wrap gap-2 pt-1">
+                <Link href="/location" className="btn-secondary no-underline">
+                  <MapPin size={16} /> Map page
                 </Link>
-                <a
-                  href="https://www.facebook.com/profile.php?id=61587396941428"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="btn-secondary no-underline"
-                >
-                  Facebook Page
+                <a href={MAP_LINK} target="_blank" rel="noreferrer" className="btn-primary no-underline">
+                  Directions
                 </a>
               </div>
             </div>
-
-            <div className="surface-card rounded-3xl p-5 text-slate-900">
-              <div className="flex items-center gap-3">
-                <div className="relative h-14 w-14 overflow-hidden rounded-2xl border border-cyan-100 bg-white">
-                  <Image src="/siyatha-logo.jpg" alt="Siyatha logo" fill className="object-cover" sizes="56px" />
-                </div>
-                <div>
-                  <p className="text-xs font-semibold uppercase tracking-[0.16em] text-cyan-700">Siyatha Online</p>
-                  <h2 className="font-display text-xl font-bold text-slate-900">සෑමවිටම හොඳම මිල ඔබට</h2>
-                </div>
-              </div>
-
-              <ul className="mt-5 space-y-3 text-sm text-slate-700">
-                <li className="flex items-start gap-3">
-                  <PhoneCall size={17} className="mt-0.5 text-cyan-700" />
-                  <div>
-                    <p className="font-semibold text-slate-900">Phone / WhatsApp</p>
-                    <a href="tel:+94766609143" className="hover:text-cyan-700">+94 76 660 9143</a>
-                  </div>
-                </li>
-                <li className="flex items-start gap-3">
-                  <MapPin size={17} className="mt-0.5 text-cyan-700" />
-                  <div>
-                    <p className="font-semibold text-slate-900">Location</p>
-                    <p>Kirimatiya, Batapola, Ambalangoda.</p>
-                  </div>
-                </li>
-                <li className="flex items-start gap-3">
-                  <Clock3 size={17} className="mt-0.5 text-cyan-700" />
-                  <div>
-                    <p className="font-semibold text-slate-900">Working Hours</p>
-                    <p>Mon - Sat: 9.00 AM - 7.00 PM</p>
-                  </div>
-                </li>
-              </ul>
-            </div>
           </div>
-        </section>
-
-        <section className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-          {values.map((item) => (
-            <article key={item.title} className="surface-card rounded-3xl p-6">
-              <p className="text-xs font-semibold uppercase tracking-[0.15em] text-cyan-700">Value</p>
-              <h3 className="mt-2 font-display text-xl font-bold text-slate-900">{item.title}</h3>
-              <p className="mt-2 text-sm leading-6 text-slate-600">{item.text}</p>
-            </article>
-          ))}
-        </section>
-
-        <section className="surface-card rounded-[2rem] p-6 sm:p-8">
-          <div className="grid gap-6 lg:grid-cols-[1fr_auto] lg:items-center">
-            <div>
-              <p className="text-xs font-semibold uppercase tracking-[0.16em] text-cyan-700">Where We Are</p>
-              <h3 className="mt-2 font-display text-2xl font-bold text-slate-900">Visit or Contact Us Anytime</h3>
-              <p className="mt-3 max-w-2xl text-sm leading-7 text-slate-600 sm:text-base">
-                Based in Kirimatiya, Batapola, Ambalangoda, Siyatha Online serves customers across Sri Lanka with fast
-                delivery and responsive support.
-              </p>
-              <a
-                href="https://maps.google.com/?q=Kirimatiya%2C+Batapola%2C+Ambalangoda"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="mt-4 inline-flex items-center gap-2 font-semibold text-cyan-700 hover:text-cyan-800"
-              >
-                Open location in Google Maps <ArrowRight size={16} />
-              </a>
-            </div>
-
-            <div className="rounded-2xl border border-cyan-100 bg-cyan-50 px-5 py-4 text-sm text-cyan-900">
-              <p className="font-semibold">Need quick help?</p>
-              <p className="mt-1">Call or message us and we will guide you to the right product faster.</p>
-              <a href="tel:+94766609143" className="mt-3 inline-block font-bold text-cyan-800 hover:text-cyan-900">
-                +94 76 660 9143
-              </a>
-            </div>
-          </div>
-        </section>
-      </div>
+        </div>
+      </section>
     </div>
   );
 }
