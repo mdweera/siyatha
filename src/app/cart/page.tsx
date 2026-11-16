@@ -81,7 +81,7 @@ export default function CartPage() {
           <p className="text-gray-500 mb-6 text-lg">Your cart is empty.</p>
           <div className="flex flex-wrap justify-center gap-3">
             <Link href="/photo-prints/order" className="btn-primary no-underline">
-              Upload photos
+              Send photos
             </Link>
             <Link href="/packaging" className="inline-flex items-center gap-2 px-6 py-3 border border-slate-200 rounded-full font-medium text-slate-800">
               Packaging

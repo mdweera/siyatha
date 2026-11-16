@@ -20,7 +20,7 @@ import { pageMeta } from "@/lib/site";
 export const metadata: Metadata = pageMeta(
   "/photo-prints",
   "Photo print Sri Lanka",
-  "Photo prints in Sri Lanka from Rs 30. Upload 4×6 prints, enlargements, passport sheets, and cards. Ships in one business day."
+  "Photo prints in Sri Lanka from Rs 30. Send 4×6 prints, enlargements, passport sheets, and cards. Ships in one business day."
 );
 
 export default async function PhotoPrintsPage() {
@@ -69,7 +69,7 @@ export default async function PhotoPrintsPage() {
               Photo print Sri Lanka
             </p>
             <h1 className="mt-4 max-w-3xl font-display text-4xl font-black leading-tight text-slate-900 sm:text-5xl">
-              Upload the photos. We ship the prints within{" "}
+              Send your photos. We ship the prints within{" "}
               <span className="mx-1 inline-flex h-10 w-10 translate-y-[-2px] items-center justify-center rounded-full bg-[#F2B400] align-middle text-2xl font-black text-[#111] sm:h-11 sm:w-11 sm:text-3xl">
                 1
               </span>{" "}
@@ -81,7 +81,7 @@ export default async function PhotoPrintsPage() {
             </p>
             <div className="mt-6 flex flex-wrap gap-3">
               <Link href="/photo-prints/order" className="btn-primary no-underline">
-                Upload photos <ArrowRight size={16} />
+                Send photos <ArrowRight size={16} />
               </Link>
               <a
                 href={whatsappHref("Hello Siyatha, I want a photo print quote.")}
@@ -98,10 +98,10 @@ export default async function PhotoPrintsPage() {
               <Image src="/carousel-01.webp" alt="Printed photos of family, travel, and pets" fill className="object-cover" sizes="(max-width: 1024px) 100vw, 40vw" priority />
             </div>
             <div className="relative aspect-[4/3] overflow-hidden rounded-[1.25rem]">
-              <Image src="/carousel-04.jpg" alt="Birthday photo prints" fill className="object-cover" sizes="20vw" />
+              <Image src="/print-photos/family.jpg" alt="A family photo ready to print" fill className="object-cover" sizes="20vw" />
             </div>
             <div className="relative aspect-[4/3] overflow-hidden rounded-[1.25rem]">
-              <Image src="/carousel-03.jpg" alt="Photo print sizes laid out on a table" fill className="object-cover" sizes="20vw" />
+              <Image src="/print-photos/cards.jpg" alt="Photo cards printed for a birthday" fill className="object-cover" sizes="20vw" />
             </div>
           </div>
         </section>
@@ -109,7 +109,7 @@ export default async function PhotoPrintsPage() {
         <section>
           <h2 className="font-display text-3xl font-bold text-slate-900">Start with a size</h2>
           <p className="mt-2 max-w-2xl text-sm leading-6 text-slate-600">
-            These are the prints people order first. The price is per picture, and the upload page shows the total before you pay.
+            These are the prints people order first. The price is per picture, and the order page shows the total before you pay.
           </p>
           <div className="mt-5 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
             {["4x6", "5x7", "passport-8", "8x10"].map((id) => {
@@ -136,6 +136,9 @@ export default async function PhotoPrintsPage() {
 
         <section>
           <h2 className="font-display text-3xl font-bold text-slate-900">Choose a print</h2>
+          <p className="mt-2 max-w-2xl text-sm leading-6 text-slate-600">
+            Four ways people print. Each one opens with its sizes, and the price per picture is on the card.
+          </p>
           <div className="mt-5 grid gap-4 md:grid-cols-2">
             {PRINT_FAMILIES.map((family) => {
               const from = lowestFamilyPrice(family.id, sizes);
@@ -147,15 +150,26 @@ export default async function PhotoPrintsPage() {
                 <Link
                   key={family.id}
                   href={`/photo-prints/order?family=${family.id}${first ? `&size=${first.id}` : ""}`}
-                  className="surface-card rounded-[1.75rem] p-5 transition hover:-translate-y-0.5"
+                  className="surface-card group overflow-hidden rounded-[1.75rem] no-underline transition hover:-translate-y-0.5"
                 >
-                  <span className={`inline-flex h-11 w-11 items-center justify-center rounded-2xl ${tone}`}>
-                    <Icon size={20} />
-                  </span>
-                  <p className="mt-4 text-xs font-semibold uppercase tracking-[0.14em] text-[#B10C53]">From {formatRs(from)}</p>
-                  <h3 className="mt-2 font-display text-2xl font-bold text-slate-900">{family.title}</h3>
-                  <p className="mt-2 text-sm leading-6 text-slate-600">{family.text}</p>
-                  <p className="mt-4 text-sm font-semibold text-slate-900">Open this size <ArrowRight className="inline" size={14} /></p>
+                  <div className="relative aspect-[16/9] overflow-hidden">
+                    <Image
+                      src={family.image}
+                      alt={family.imageAlt}
+                      fill
+                      className="object-cover transition duration-500 group-hover:scale-[1.03]"
+                      sizes="(max-width: 768px) 100vw, 45vw"
+                    />
+                    <span className={`absolute left-4 top-4 inline-flex h-11 w-11 items-center justify-center rounded-2xl shadow-sm ${tone}`}>
+                      <Icon size={20} />
+                    </span>
+                  </div>
+                  <div className="p-5">
+                    <p className="text-xs font-semibold uppercase tracking-[0.14em] text-[#B10C53]">From {formatRs(from)}</p>
+                    <h3 className="mt-2 font-display text-2xl font-bold text-slate-900">{family.title}</h3>
+                    <p className="mt-2 text-sm leading-6 text-slate-600">{family.text}</p>
+                    <p className="mt-4 text-sm font-semibold text-[#B10C53]">See the sizes <ArrowRight className="inline" size={14} /></p>
+                  </div>
                 </Link>
               );
             })}

@@ -90,7 +90,7 @@ export default function WelcomePopup() {
         <p className="mt-2 text-sm leading-6 text-slate-600 sm:text-base">
           {t(
             "ඡායාරූප upload කරලා print කරගන්න. Online sellers ට packaging, ගෙදර හදන අයට craft materials.",
-            "Upload photos for printing, pack what you sell online, and pick up craft materials for making at home."
+            "Send your photos for printing, pack what you sell online, and pick up craft materials for making at home."
           )}
         </p>
 

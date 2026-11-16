@@ -44,7 +44,7 @@ export default async function DashboardPage() {
           <div className="surface-card p-6">
             <p>No orders yet.</p>
             <Link href="/photo-prints/order" className="btn-primary mt-4 no-underline">
-              Upload photos
+              Send photos
             </Link>
           </div>
         ) : (

@@ -395,7 +395,7 @@ export default function PrintStudio({ initialFamily, initialSize }: PrintStudioP
           <div className="flex flex-wrap items-end justify-between gap-3">
             <div>
               <p className="text-xs font-semibold uppercase tracking-[0.14em] text-[#B10C53]">3 · Your photos</p>
-              <h2 className="mt-1 font-display text-2xl font-bold text-slate-900">Upload, then set copies</h2>
+              <h2 className="mt-1 font-display text-2xl font-bold text-slate-900">Send photos, then set copies</h2>
               <p className="mt-1 text-sm text-slate-600">
                 {size ? `${size.label} · ${size.cm}` : "Choose a size"} · {finish.title}
               </p>

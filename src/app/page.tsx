@@ -23,7 +23,7 @@ export const dynamic = "force-dynamic";
 export const metadata = pageMeta(
   "/",
   "Photo prints in Sri Lanka",
-  "Upload photos to print in Sri Lanka from Rs 30. Packaging and craft materials are also in the shop. Cash on delivery."
+  "Print your photos in Sri Lanka from Rs 30. Packaging and craft materials are also in the shop. Cash on delivery."
 );
 
 const previewIds = ["4x6", "5x7", "8x10", "a4", "passport-8"];

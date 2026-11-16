@@ -20,8 +20,8 @@ const dictionary = {
     home: {
       promise: "Photo prints first. Packaging and craft when you need them.",
       title: "Print your photos in Sri Lanka.",
-      body: "Upload from your phone. We print 4×6, enlargements, passport sheets, and cards, then ship across the island.",
-      upload: "Upload photos",
+      body: "Send photos from your phone. We print 4×6, enlargements, passport sheets, and cards, then ship across the island.",
+      upload: "Send photos",
       whatsapp: "WhatsApp",
       printsTitle: "Photo prints",
       printsText: "Phone photos, passport sheets, and cards.",
@@ -37,7 +37,7 @@ const dictionary = {
       stepsTitle: "How printing works",
       step1: "Choose the size",
       step1Text: "4×6, a frame print, a passport sheet, or a card.",
-      step2: "Upload the photos",
+      step2: "Send the photos",
       step2Text: "Drop pictures from your phone and set the copies.",
       step3: "We print and ship",
       step3Text: "Prints leave within one business day.",
@@ -70,7 +70,7 @@ const dictionary = {
       rights: "All rights reserved.",
     },
     dock: {
-      upload: "Upload photos",
+      upload: "Send photos",
       whatsapp: "WhatsApp",
       cart: "Cart",
     },
@@ -86,7 +86,7 @@ const dictionary = {
       pickupShort: "Pickup",
       delivery: "Delivery",
       checkout: "Checkout",
-      upload: "Upload photos",
+      upload: "Send photos",
     },
   },
   si: {

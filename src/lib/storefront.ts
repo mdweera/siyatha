@@ -148,26 +148,36 @@ export const PRINT_FAMILIES: Array<{
   id: PrintFamilyId;
   title: string;
   text: string;
+  image: string;
+  imageAlt: string;
 }> = [
   {
     id: "copies",
     title: "Photo copies",
     text: "Everyday prints from a phone or camera. The 4×6 is the one most people order.",
+    image: "/print-photos/copies.jpg",
+    imageAlt: "Small photo prints ready to hand over",
   },
   {
     id: "enlargements",
     title: "Enlargements",
     text: "Bigger prints for a frame, a gift, or a shop wall.",
+    image: "/print-photos/enlargements.jpg",
+    imageAlt: "Large framed photo print on a wall",
   },
   {
     id: "passport",
     title: "Passport sheets",
     text: "A sheet of matching photos you can cut. Check the current visa size before you order.",
+    image: "/print-photos/passport.jpg",
+    imageAlt: "Passport, visa, and ID documents on a desk",
   },
   {
     id: "cards",
     title: "Photo cards",
     text: "Birthday, thank-you, and invitation cards printed from your picture.",
+    image: "/print-photos/cards.jpg",
+    imageAlt: "Printed cards and postcards spread out",
   },
 ];
 
@@ -201,7 +211,7 @@ export const PRINT_FAQS: Array<{ question: string; answer: string }> = [
   {
     question: "Where can I get a photo print in Sri Lanka?",
     answer:
-      "Upload the photos on siyatha.lk. We print them and send them by courier across Sri Lanka.",
+      "Send the photos on siyatha.lk. We print them and send them by courier across Sri Lanka.",
   },
   {
     question: "How long does photo printing take?",

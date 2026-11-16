@@ -24,3 +24,5 @@
 - Closable free-delivery banners on cart/checkout use `FreeDeliveryBanner` (session dismiss). Site-wide click/route pending UI is `NavigationFeedback` + `signalNavigationPending()` for `router.push`.
 - Home leads with photo prints in one soft band (hero → CTA/prices/steps/gallery/trust). Packaging + craft are a compact secondary row. Track, FAQ, and reviews share one help band. No thick section borders.
 - Login is a site-wide popup (`AuthModalProvider` / `LoginModal`). `/login` redirects to `/?login=1`.
+- Print wording is "Send photos" (not "Upload photos"). `/photo-prints/order` is titled "Print your photos". Passport/visa/thank-you copy uses "send".
+- Print family photos live in `public/print-photos/` (`copies`, `enlargements`, `passport`, `cards`, `family`), saved locally as JPEG so no hotlink. CC0 Unsplash shots mirrored on Wikimedia Commons; swap any file to use the shop's own pictures. `PRINT_FAMILIES[].image` / `imageAlt` drive the "Choose a print" cards.

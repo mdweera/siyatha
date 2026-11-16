@@ -38,14 +38,14 @@ export default function WhoAreWePage() {
             We print photos, pack online orders, and stock craft materials.
           </h1>
           <p className="mt-5 max-w-2xl text-base leading-8 text-[var(--muted)]">
-            Upload a picture and we print it. Buy mailers and boxes for the parcels you sell. Pick up paper, glue, and sewing
+            Send a picture and we print it. Buy mailers and boxes for the parcels you sell. Pick up paper, glue, and sewing
             supplies for home projects. We work from Kirimatiya, Batapola, and courier across Sri Lanka — or you can collect at the shop.
           </p>
           <p className="font-sinhala mt-4 text-xl font-bold leading-[1.85] text-[var(--ink)]">සෑමවිටම හොඳම මිල ඔබට</p>
 
           <div className="mt-8 flex flex-wrap gap-3">
             <Link href="/photo-prints/order" className="btn-primary no-underline">
-              Upload photos <ArrowRight size={16} />
+              Send photos <ArrowRight size={16} />
             </Link>
             <a href={whatsappHref("Hello Siyatha, I have a question.")} className="btn-whatsapp no-underline" target="_blank" rel="noreferrer">
               <MessageCircle size={16} /> WhatsApp
