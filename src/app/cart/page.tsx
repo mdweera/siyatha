@@ -2,15 +2,15 @@
 
 import { useCartStore } from "@/store/useCartStore";
 import { INITIAL_DELIVERY_CHARGE, INITIAL_FREE_DELIVERY, quoteDelivery, type ShopDelivery } from "@/lib/delivery";
-import { formatRs } from "@/lib/storefront";
-import { Minus, PhoneCall, Plus, Trash2 } from "lucide-react";
+import { formatRs, SHOP_PLACE } from "@/lib/storefront";
+import { Minus, PhoneCall, Plus, Store, Trash2, Truck } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import FreeDeliveryBanner from "@/components/cart/FreeDeliveryBanner";
 
 export default function CartPage() {
-  const { items, removeFromCart, updateQuantity, totalPrice } = useCartStore();
+  const { items, removeFromCart, updateQuantity, totalPrice, fulfillment, setFulfillment } = useCartStore();
   const [mounted, setMounted] = useState(false);
   const [delivery, setDelivery] = useState<ShopDelivery>({
     freeDeliveryAbove: INITIAL_FREE_DELIVERY,
@@ -36,18 +36,44 @@ export default function CartPage() {
 
   if (!mounted) return null;
 
-  const quote = quoteDelivery(totalPrice(), delivery);
+  const pickup = fulfillment === "pickup";
+  const quote = quoteDelivery(totalPrice(), delivery, fulfillment);
 
   return (
     <div className="mx-auto w-full max-w-5xl px-4 py-8">
       <h1 className="mb-8 font-display text-3xl font-black tracking-tight text-slate-900">Shopping cart</h1>
-      {items.length > 0 ? (
+      {items.length > 0 && !pickup ? (
         <FreeDeliveryBanner
           remaining={quote.remaining}
           threshold={quote.threshold}
           charge={quote.charge}
           storageKey="siyatha-cart-free-delivery"
         />
+      ) : null}
+      {items.length > 0 ? (
+        <div className="mb-6 grid gap-2 sm:grid-cols-2">
+          {[
+            { id: "delivery" as const, label: "Home delivery", text: "Courier to your address", icon: Truck },
+            { id: "pickup" as const, label: "Store pickup", text: `Collect at ${SHOP_PLACE}`, icon: Store },
+          ].map((option) => (
+            <button
+              key={option.id}
+              type="button"
+              onClick={() => setFulfillment(option.id)}
+              className={`flex items-start gap-3 rounded-2xl border px-4 py-3 text-left transition ${
+                fulfillment === option.id
+                  ? "border-[#F2B400] bg-[#fff3c4] ring-2 ring-[#F2B400]/40"
+                  : "border-[var(--line)] bg-white hover:bg-[var(--yellow-tint)]"
+              }`}
+            >
+              <option.icon className="mt-0.5 shrink-0 text-[#681878]" size={18} />
+              <span>
+                <span className="block text-sm font-bold">{option.label}</span>
+                <span className="mt-1 block text-xs text-[var(--muted)]">{option.text}</span>
+              </span>
+            </button>
+          ))}
+        </div>
       ) : null}
 
       {items.length === 0 ? (
@@ -122,13 +148,15 @@ export default function CartPage() {
                 <span>{formatRs(quote.subtotal)}</span>
               </div>
               <div className="flex justify-between">
-                <span>Delivery</span>
+                <span>{pickup ? "Pickup" : "Delivery"}</span>
                 <span>{quote.charge === 0 ? "Free" : formatRs(quote.charge)}</span>
               </div>
               <p className="text-xs leading-5 text-slate-500">
-                {quote.qualifies
-                  ? `Free delivery applies above ${formatRs(quote.threshold)}.`
-                  : `Add ${formatRs(quote.remaining)} for free delivery.`}
+                {pickup
+                  ? "Store pickup has no delivery charge."
+                  : quote.qualifies
+                    ? `Free delivery applies above ${formatRs(quote.threshold)}.`
+                    : `Add ${formatRs(quote.remaining)} for free delivery.`}
               </p>
             </div>
             <div className="flex justify-between items-center border-t pt-4 mb-6">

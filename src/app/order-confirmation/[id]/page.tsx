@@ -27,6 +27,7 @@ export default async function OrderConfirmationPage({ params }: { params: Promis
 
   const trackingCode = String(order.trackingCode || order.orderNumber || "");
   const isGuest = !order.userId;
+  const isPickup = String(order.fulfillmentMethod || "delivery") === "pickup";
 
   return (
     <div className="container mx-auto max-w-4xl px-4 py-12">
@@ -105,6 +106,10 @@ export default async function OrderConfirmationPage({ params }: { params: Promis
               </span>
             </div>
             <div className="flex justify-between">
+              <span className="text-gray-600">Fulfillment:</span>
+              <span className="font-semibold text-gray-900">{isPickup ? "Store pickup" : "Home delivery"}</span>
+            </div>
+            <div className="flex justify-between">
               <span className="text-gray-600">Payment Method:</span>
               <span className="font-semibold capitalize text-gray-900">{order.paymentMethod.replace("_", " ")}</span>
             </div>
@@ -135,17 +140,10 @@ export default async function OrderConfirmationPage({ params }: { params: Promis
           </div>
 
           <div className="mt-6 border-t pt-6">
-            {Number(order.deliveryCharge) > 0 ? (
-              <div className="mb-2 flex justify-between text-sm text-gray-600">
-                <span>Delivery</span>
-                <span>Rs {Number(order.deliveryCharge).toLocaleString()}</span>
-              </div>
-            ) : (
-              <div className="mb-2 flex justify-between text-sm text-gray-600">
-                <span>Delivery</span>
-                <span>Free</span>
-              </div>
-            )}
+            <div className="mb-2 flex justify-between text-sm text-gray-600">
+              <span>{isPickup ? "Pickup" : "Delivery"}</span>
+              <span>{Number(order.deliveryCharge) > 0 ? `Rs ${Number(order.deliveryCharge).toLocaleString()}` : "Free"}</span>
+            </div>
             <div className="flex justify-between text-xl font-bold text-gray-900">
               <span>Total Amount:</span>
               <span>Rs {order.totalAmount.toLocaleString()}</span>
@@ -155,7 +153,7 @@ export default async function OrderConfirmationPage({ params }: { params: Promis
 
         <div className="space-y-6">
           <div className="rounded-2xl border bg-white p-8 shadow-sm">
-            <h2 className="mb-6 text-2xl font-bold text-gray-900">Shipping Information</h2>
+            <h2 className="mb-6 text-2xl font-bold text-gray-900">{isPickup ? "Pickup information" : "Shipping information"}</h2>
             <div className="space-y-4">
               <div>
                 <h3 className="mb-2 font-semibold text-gray-900">

@@ -27,6 +27,7 @@ export async function GET(request: NextRequest) {
     createdAt: order.createdAt,
     totalAmount: order.totalAmount,
     deliveryCharge: order.deliveryCharge || 0,
+    fulfillmentMethod: order.fulfillmentMethod === "pickup" ? "pickup" : "delivery",
     city: order.shippingAddress?.city || "",
     items: (order.items || []).map((item: { name?: string; quantity?: number; kind?: string }) => ({
       name: item.name || "Item",

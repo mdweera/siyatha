@@ -6,10 +6,11 @@ import Product from "@/models/Product";
 import UserTrackingEvent from "@/models/UserTrackingEvent";
 import { authOptions } from "@/lib/auth";
 import { findFinish, findPrintSize, printUnitPrice } from "@/lib/storefront";
-import { quoteDelivery } from "@/lib/delivery";
+import { isFulfillmentMethod, quoteDelivery } from "@/lib/delivery";
 import { getShopSettings } from "@/lib/shopDelivery";
 import { movePrintToOrder } from "@/lib/cloudinaryPrints";
 import { makeTrackingCode } from "@/lib/trackingCode";
+import { SHOP_PLACE } from "@/lib/storefront";
 
 type CheckoutItemInput = {
   productId?: string;
@@ -36,14 +37,25 @@ export async function POST(request: NextRequest) {
     const orderData = await request.json();
 
     const { items, shippingAddress, paymentMethod } = orderData;
+    const fulfillmentMethod = isFulfillmentMethod(orderData.fulfillmentMethod)
+      ? orderData.fulfillmentMethod
+      : "delivery";
+    const pickup = fulfillmentMethod === "pickup";
     const phone = String(shippingAddress?.phone || "").replace(/\s+/g, "");
     const email = String(shippingAddress?.email || "").trim();
     const firstName = String(shippingAddress?.firstName || "").trim();
     const lastName = String(shippingAddress?.lastName || "").trim();
-    const address = String(shippingAddress?.address || "").trim();
-    const city = String(shippingAddress?.city || "").trim();
-    if (!items || !shippingAddress || !firstName || !address || !city || !email) {
+    const address = pickup
+      ? String(shippingAddress?.address || "").trim() || `Store pickup · ${SHOP_PLACE}`
+      : String(shippingAddress?.address || "").trim();
+    const city = pickup
+      ? String(shippingAddress?.city || "").trim() || "Batapola"
+      : String(shippingAddress?.city || "").trim();
+    if (!items || !shippingAddress || !firstName || !email) {
       return NextResponse.json({ error: "Missing required fields" }, { status: 400 });
+    }
+    if (!pickup && (!address || !city)) {
+      return NextResponse.json({ error: "Enter a delivery address and city." }, { status: 400 });
     }
     if (!/^(?:\+94|0)7\d{8}$/.test(phone)) {
       return NextResponse.json({ error: "Use a Sri Lankan mobile number." }, { status: 400 });
@@ -156,7 +168,7 @@ export async function POST(request: NextRequest) {
     ];
 
     const computedTotal = orderItems.reduce((sum, item) => sum + item.subtotal, 0);
-    const deliveryQuote = quoteDelivery(computedTotal, shop);
+    const deliveryQuote = quoteDelivery(computedTotal, shop, fulfillmentMethod);
 
     // Create order
     const orderNumber = `SO-${Date.now()}`;
@@ -185,6 +197,7 @@ export async function POST(request: NextRequest) {
       items: orderItems,
       shippingAddress: safeAddress,
       deliveryCharge: deliveryQuote.charge,
+      fulfillmentMethod,
       totalAmount: deliveryQuote.total,
       paymentMethod,
       status: "pending",
@@ -219,6 +232,7 @@ export async function POST(request: NextRequest) {
         orderNumber: order.orderNumber,
         totalAmount: deliveryQuote.total,
         itemCount: orderItems.length,
+        fulfillmentMethod,
       },
     });
 

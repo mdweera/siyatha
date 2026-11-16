@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { usePathname } from "next/navigation";
-import { ShoppingCart } from "lucide-react";
+import { ShoppingCart, Store } from "lucide-react";
 import { useCartStore } from "@/store/useCartStore";
 import { INITIAL_DELIVERY_CHARGE, INITIAL_FREE_DELIVERY, quoteDelivery, type ShopDelivery } from "@/lib/delivery";
 import { formatRs } from "@/lib/storefront";
@@ -14,6 +14,8 @@ export default function OrderBar() {
   const pathname = usePathname();
   const copy = t(useLang()).bar;
   const items = useCartStore((state) => state.items);
+  const fulfillment = useCartStore((state) => state.fulfillment);
+  const setFulfillment = useCartStore((state) => state.setFulfillment);
   const subtotal = useCartStore((state) => state.totalPrice());
   const [mounted, setMounted] = useState(false);
   const [settings, setSettings] = useState<ShopDelivery>({
@@ -40,9 +42,13 @@ export default function OrderBar() {
     return null;
   }
 
-  const quote = quoteDelivery(subtotal, settings);
+  const quote = quoteDelivery(subtotal, settings, fulfillment);
   const count = items.reduce((sum, item) => sum + item.quantity, 0);
-  const progress = quote.threshold > 0 ? Math.min(100, (quote.subtotal / quote.threshold) * 100) : 0;
+  const progress = quote.pickup
+    ? 100
+    : quote.threshold > 0
+      ? Math.min(100, (quote.subtotal / quote.threshold) * 100)
+      : 0;
   const onCheckout = pathname.startsWith("/checkout");
 
   return (
@@ -54,19 +60,50 @@ export default function OrderBar() {
             <span className="ml-2 font-display text-lg font-black text-slate-900">{formatRs(quote.total)}</span>
           </p>
           <p className="truncate text-xs font-semibold text-[#B10C53]">
-            {quote.qualifies
-              ? copy.free
-              : quote.threshold > 0
-                ? `${copy.add} ${formatRs(quote.remaining)} ${copy.forFree}`.trim()
-                : copy.later}
+            {quote.pickup
+              ? copy.pickup
+              : quote.qualifies
+                ? copy.free
+                : quote.threshold > 0
+                  ? `${copy.add} ${formatRs(quote.remaining)} ${copy.forFree}`.trim()
+                  : copy.later}
           </p>
           <div className="mt-1.5 h-1.5 overflow-hidden rounded-full bg-[#F9E094]">
-            <div className="h-full rounded-full bg-[#F2B400]" style={{ width: `${quote.qualifies ? 100 : progress}%` }} />
+            <div
+              className={`h-full rounded-full ${quote.pickup ? "bg-emerald-500" : "bg-[#F2B400]"}`}
+              style={{ width: `${quote.qualifies || quote.pickup ? 100 : progress}%` }}
+            />
           </div>
+          {count > 0 ? (
+            <div className="mt-2 flex flex-wrap gap-1.5">
+              <button
+                type="button"
+                onClick={() => setFulfillment("delivery")}
+                className={`rounded-full px-2.5 py-1 text-[11px] font-bold ${
+                  fulfillment === "delivery" ? "bg-[#F2B400] text-[#111]" : "bg-white text-slate-600 ring-1 ring-[var(--line)]"
+                }`}
+              >
+                {copy.delivery}
+              </button>
+              <button
+                type="button"
+                onClick={() => setFulfillment("pickup")}
+                className={`inline-flex items-center gap-1 rounded-full px-2.5 py-1 text-[11px] font-bold ${
+                  fulfillment === "pickup" ? "bg-emerald-600 text-white" : "bg-white text-slate-600 ring-1 ring-[var(--line)]"
+                }`}
+              >
+                <Store size={11} /> {copy.pickupShort}
+              </button>
+            </div>
+          ) : null}
         </div>
         <div className="flex shrink-0 gap-2">
           {pathname !== "/cart" ? (
-            <Link href="/cart" className="inline-flex min-h-11 items-center gap-2 rounded-full border border-[#CD7DA2]/50 bg-white px-4 py-2 text-sm font-semibold text-[#2b1636] no-underline" aria-label={copy.cart}>
+            <Link
+              href="/cart"
+              className="inline-flex min-h-11 items-center gap-2 rounded-full border border-[#CD7DA2]/50 bg-white px-4 py-2 text-sm font-semibold text-[#2b1636] no-underline"
+              aria-label={copy.cart}
+            >
               <ShoppingCart size={16} /> {copy.cart}
             </Link>
           ) : null}

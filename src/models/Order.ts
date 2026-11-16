@@ -26,6 +26,7 @@ export interface IOrder extends mongoose.Document {
 
   totalAmount: number;
   deliveryCharge?: number;
+  fulfillmentMethod?: "delivery" | "pickup";
   status: OrderStatus;
 
   // Online-specific fields
@@ -71,6 +72,7 @@ const OrderSchema = new mongoose.Schema(
 
     totalAmount: { type: Number, required: true, min: 0 },
     deliveryCharge: { type: Number, default: 0, min: 0 },
+    fulfillmentMethod: { type: String, enum: ['delivery', 'pickup'], default: 'delivery' },
     status: { type: String, enum: ['pending', 'processing', 'shipped', 'delivered', 'cancelled'], default: 'pending' },
 
     // Online-specific

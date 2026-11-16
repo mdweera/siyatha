@@ -1,5 +1,6 @@
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
+import type { FulfillmentMethod } from "@/lib/delivery";
 import { printUnitPrice } from "@/lib/storefront";
 
 export interface CartItem {
@@ -16,6 +17,8 @@ export interface CartItem {
 
 interface CartStore {
   items: CartItem[];
+  fulfillment: FulfillmentMethod;
+  setFulfillment: (method: FulfillmentMethod) => void;
   addToCart: (item: Omit<CartItem, "quantity"> & { quantity?: number }) => void;
   removeFromCart: (id: string) => void;
   updateQuantity: (id: string, quantity: number) => void;
@@ -53,7 +56,9 @@ export const useCartStore = create<CartStore>()(
   persist(
     (set, get) => ({
       items: [],
+      fulfillment: "delivery",
       priceVersion: 0,
+      setFulfillment: (method) => set({ fulfillment: method }),
       addToCart: (item) => {
         const quantity = item.quantity && item.quantity > 0 ? Math.floor(item.quantity) : 1;
         const currentItems = get().items;
@@ -97,7 +102,7 @@ export const useCartStore = create<CartStore>()(
           items: withPrintPrices(get().items),
           priceVersion: get().priceVersion + 1,
         }),
-      clearCart: () => set({ items: [] }),
+      clearCart: () => set({ items: [], fulfillment: "delivery" }),
       totalItems: () => get().items.reduce((total, item) => total + item.quantity, 0),
       totalPrice: () => get().items.reduce((total, item) => total + item.price * item.quantity, 0),
     }),

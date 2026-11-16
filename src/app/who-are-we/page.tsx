@@ -35,11 +35,11 @@ export default function WhoAreWePage() {
           </div>
 
           <h1 className="mt-8 max-w-3xl text-4xl font-bold leading-tight text-[var(--ink)] sm:text-5xl">
-            A small print and packaging shop in Batapola.
+            We print photos, pack online orders, and stock craft materials.
           </h1>
           <p className="mt-5 max-w-2xl text-base leading-8 text-[var(--muted)]">
-            We print the photos you upload, pack parcels for people who sell online, and keep craft materials for sewing,
-            paper, and glue. Orders leave Kirimatiya and travel across Sri Lanka by courier.
+            Upload a picture and we print it. Buy mailers and boxes for the parcels you sell. Pick up paper, glue, and sewing
+            supplies for home projects. We work from Kirimatiya, Batapola, and courier across Sri Lanka — or you can collect at the shop.
           </p>
           <p className="font-sinhala mt-4 text-xl font-bold leading-[1.85] text-[var(--ink)]">සෑමවිටම හොඳම මිල ඔබට</p>
 
@@ -49,6 +49,17 @@ export default function WhoAreWePage() {
             </Link>
             <a href={whatsappHref("Hello Siyatha, I have a question.")} className="btn-whatsapp no-underline" target="_blank" rel="noreferrer">
               <MessageCircle size={16} /> WhatsApp
+            </a>
+            <a
+              href="https://www.facebook.com/profile.php?id=61587396941428"
+              target="_blank"
+              rel="noreferrer"
+              className="inline-flex min-h-11 items-center justify-center gap-2 rounded-[12px] bg-[#1877F2] px-4 py-2 text-sm font-bold text-white no-underline hover:bg-[#166fe5]"
+            >
+              <svg viewBox="0 0 24 24" width="14" height="14" aria-hidden="true" fill="currentColor">
+                <path d="M22 12.07C22 6.48 17.52 2 11.93 2S1.86 6.48 1.86 12.07c0 5.02 3.66 9.18 8.44 9.93v-7.03H7.9v-2.9h2.4V9.84c0-2.37 1.4-3.68 3.56-3.68 1.03 0 2.11.18 2.11.18v2.32h-1.19c-1.17 0-1.54.73-1.54 1.48v1.78h2.62l-.42 2.9h-2.2V22c4.78-.75 8.44-4.91 8.44-9.93z" />
+              </svg>
+              Facebook page
             </a>
           </div>
         </div>
