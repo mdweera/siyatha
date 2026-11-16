@@ -70,7 +70,7 @@ export default async function PhotoPrintsPage() {
             </p>
             <h1 className="mt-4 max-w-3xl font-display text-4xl font-black leading-tight text-slate-900 sm:text-5xl">
               Send your photos. We ship the prints within{" "}
-              <span className="mx-1 inline-flex h-10 w-10 translate-y-[-2px] items-center justify-center rounded-full bg-[#681878] align-middle text-2xl font-black text-white sm:h-11 sm:w-11 sm:text-3xl">
+              <span className="one-day-glow mx-1 inline-flex h-10 w-10 translate-y-[-2px] items-center justify-center rounded-full bg-[#681878] align-middle text-2xl font-black text-white sm:h-11 sm:w-11 sm:text-3xl">
                 1
               </span>{" "}
               business day.
