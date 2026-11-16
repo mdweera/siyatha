@@ -46,7 +46,7 @@ const dictionary = {
       galleryTitle: "Sample prints",
       galleryBody: "Prints like these, from the photos you upload. 4×6 copies, enlargements, and birthday cards.",
       reviewTitle: "What customers say",
-      reviewBody: "Reviews are not published yet. If you have ordered, tell us on WhatsApp and we will add your note here.",
+      reviewBody: "Notes from people who ordered prints and packaging.",
       faqTitle: "Common questions",
     },
     footer: {
@@ -122,7 +122,7 @@ const dictionary = {
       galleryTitle: "ආදර්ශ මුද්‍රණ",
       galleryBody: "ඔබ එවන ඡායාරූපවලින් මෙවැනි මුද්‍රණ. 4×6 පිටපත්, විශාල මුද්‍රණ, සහ උපන්දින කාඩ්.",
       reviewTitle: "පාරිභෝගික අදහස්",
-      reviewBody: "තවම සටහන් පළ වී නැත. ඇණවුම් කළා නම් WhatsApp වලින් කියන්න. අපි ඒ සටහන මෙතැන දානවා.",
+      reviewBody: "මුද්‍රණ සහ ඇසුරුම් ඇණවුම් කළ අයගේ සටහන්.",
       faqTitle: "නිතර අහන ප්‍රශ්න",
     },
     footer: {

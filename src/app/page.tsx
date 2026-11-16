@@ -3,6 +3,7 @@ import Link from "next/link";
 import { ArrowRight, Camera, Clock3, MessageCircle, Package, Palette, ShieldCheck, Truck } from "lucide-react";
 import HeroCarousel from "@/components/home/HeroCarousel";
 import { getShopSettings } from "@/lib/shopDelivery";
+import { CUSTOMER_REVIEWS } from "@/lib/customerReviews";
 import { formatRs, pricedPrintSizes, printFaqs, whatsappHref } from "@/lib/storefront";
 import { t } from "@/lib/i18n";
 import { getLang, pageMeta } from "@/lib/site";
@@ -199,9 +200,18 @@ export default async function HomePage() {
 
       <section className="border-t-8 border-[#F2B400] bg-[#fff8ee]">
         <div className="mx-auto grid w-full max-w-7xl gap-8 px-4 py-14 sm:px-6 lg:px-8">
-        <div className="surface-card p-5">
-          <h2 className="text-xl font-bold">{copy.reviewTitle}</h2>
-          <p className="mt-2 text-sm leading-6 text-[var(--muted)]">{copy.reviewBody}</p>
+        <div>
+          <h2 className="text-3xl font-bold">{copy.reviewTitle}</h2>
+          <p className="mt-2 max-w-2xl text-sm leading-6 text-[var(--muted)]">{copy.reviewBody}</p>
+          <div className="mt-5 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+            {CUSTOMER_REVIEWS.map((review) => (
+              <article key={`${review.name}-${review.place}`} className="surface-card p-5">
+                <p className="text-sm leading-6 text-[var(--ink)]">{lang === "si" ? review.textSi : review.textEn}</p>
+                <p className="mt-4 text-sm font-bold">{review.name}</p>
+                <p className="text-xs font-semibold uppercase tracking-[0.12em] text-[var(--muted)]">{review.place}</p>
+              </article>
+            ))}
+          </div>
         </div>
 
         <div>
