@@ -5,6 +5,7 @@ import { useSearchParams } from "next/navigation";
 import { FormEvent, Suspense, useEffect, useState } from "react";
 import { Loader2, PackageSearch } from "lucide-react";
 import { formatRs } from "@/lib/storefront";
+import LoginButton from "@/components/auth/LoginButton";
 
 const STEPS = ["received", "printing", "packed", "shipped", "delivered"] as const;
 
@@ -144,10 +145,7 @@ function TrackForm() {
 
       <p className="mt-6 text-sm text-[var(--muted)]">
         Want saved order history?{" "}
-        <Link href="/login?callbackUrl=/dashboard" className="font-semibold underline">
-          Log in
-        </Link>{" "}
-        and open your account.
+        <LoginButton className="font-semibold underline">Log in</LoginButton> and open your account.
       </p>
     </div>
   );

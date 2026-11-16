@@ -22,3 +22,5 @@
 - Home sections are full-width bands with a thick colored top border. Carousel slides are `public/carousel-01.webp` through `public/carousel-06.jpg`. Slide 01 stays first.
 - Guest orders get a unique `trackingCode` (`SY-XXXXXX`) on create. Public lookup is `GET /api/orders/track?code=` and `/track`. Confirmation shows the code + login CTA. Home, nav, and footer link to `/track`.
 - Closable free-delivery banners on cart/checkout use `FreeDeliveryBanner` (session dismiss). Site-wide click/route pending UI is `NavigationFeedback` + `signalNavigationPending()` for `router.push`.
+- Home leads with photo prints in one soft band (hero → CTA/prices/steps/gallery/trust). Packaging + craft are a compact secondary row. Track, FAQ, and reviews share one help band. No thick section borders.
+- Login is a site-wide popup (`AuthModalProvider` / `LoginModal`). `/login` redirects to `/?login=1`.

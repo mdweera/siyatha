@@ -11,6 +11,7 @@ import LanguageSwitch from "@/components/LanguageSwitch";
 import { useLang } from "@/components/LanguageProvider";
 import { t } from "@/lib/i18n";
 import { signalNavigationPending } from "@/lib/navigationPending";
+import LoginButton from "@/components/auth/LoginButton";
 
 const links = [
   { href: "/photo-prints", key: "prints" },
@@ -102,9 +103,9 @@ export default function Navbar() {
             {copy.track}
           </Link>
           {!loading && !session ? (
-            <Link href="/login" className="hidden h-11 items-center rounded-[12px] px-3 text-sm font-semibold no-underline hover:bg-[var(--yellow-tint)] md:inline-flex">
+            <LoginButton className="hidden h-11 items-center rounded-[12px] px-3 text-sm font-semibold hover:bg-[var(--yellow-tint)] md:inline-flex">
               {copy.login}
-            </Link>
+            </LoginButton>
           ) : null}
           <Link href="/cart" className="relative inline-flex h-11 w-11 items-center justify-center rounded-[12px] border border-[var(--line)]" aria-label={copy.cart}>
             <ShoppingCart size={18} />
@@ -162,9 +163,9 @@ export default function Navbar() {
               {copy.track}
             </Link>
             {!loading && !session ? (
-              <Link href="/login" className="rounded-[12px] px-3 py-3 text-base font-semibold no-underline hover:bg-[var(--yellow-tint)]">
+              <LoginButton className="rounded-[12px] px-3 py-3 text-left text-base font-semibold hover:bg-[var(--yellow-tint)]">
                 {copy.login}
-              </Link>
+              </LoginButton>
             ) : null}
           </div>
         </div>
