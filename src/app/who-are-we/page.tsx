@@ -35,11 +35,12 @@ export default function WhoAreWePage() {
           </div>
 
           <h1 className="mt-8 max-w-3xl text-4xl font-bold leading-tight text-[var(--ink)] sm:text-5xl">
-            We print photos, pack online orders, and stock craft materials.
+            We print photos, sell packaging for entrepreneurs, and craft materials for hobbyists.
           </h1>
           <p className="mt-5 max-w-2xl text-base leading-8 text-[var(--muted)]">
-            Send a picture and we print it. Buy mailers and boxes for the parcels you sell. Pick up paper, glue, and sewing
-            supplies for home projects. We work from Kirimatiya, Batapola, and courier across Sri Lanka — or you can collect at the shop.
+            Send a picture and we print it. Buy mailers, boxes, and tape if you ship online orders. Pick up paper, glue, and
+            sewing supplies for hobbies and home projects. We work from Kirimatiya, Batapola, and deliver across Sri Lanka — or
+            you can collect at the shop.
           </p>
           <p className="font-sinhala mt-4 text-xl font-bold leading-[1.85] text-[var(--ink)]">සෑමවිටම හොඳම මිල ඔබට</p>
 
