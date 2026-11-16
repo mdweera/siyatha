@@ -65,6 +65,19 @@ a {
   text-underline-offset: 3px;
 }
 
+.site-footer a,
+.site-footer .footer-link {
+  color: #f2b400 !important;
+  text-decoration: underline;
+  text-underline-offset: 4px;
+  font-weight: 600;
+}
+
+.site-footer a:hover,
+.site-footer .footer-link:hover {
+  color: #fff !important;
+}
+
 :focus-visible {
   outline: 3px solid var(--yellow);
   outline-offset: 2px;
