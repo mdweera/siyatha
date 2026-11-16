@@ -178,7 +178,9 @@ export default async function OrderConfirmationPage({ params }: { params: Promis
                     {order.shippingAddress.city}, {order.shippingAddress.postalCode}
                   </p>
                   {order.shippingAddress.notes ? (
-                    <p className="mt-2 text-sm italic">Notes: {order.shippingAddress.notes}</p>
+                    <p className="mt-2 rounded-xl bg-amber-50 px-3 py-2 text-sm text-amber-950">
+                      <span className="font-semibold">Your comment:</span> {order.shippingAddress.notes}
+                    </p>
                   ) : null}
                 </div>
               </div>

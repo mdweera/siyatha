@@ -258,15 +258,16 @@ export default function CheckoutPage() {
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">Order Notes (Optional)</label>
+              <label className="mb-2 block text-sm font-medium text-gray-700">Order comment (optional)</label>
               <textarea
                 name="notes"
-                rows={2}
+                rows={3}
                 value={shippingForm.notes}
                 onChange={handleInputChange}
-                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[var(--yellow)] focus:border-transparent"
-                placeholder="Any special instructions..."
+                className="w-full rounded-lg border border-gray-300 px-4 py-3 focus:border-transparent focus:ring-2 focus:ring-[var(--yellow)]"
+                placeholder="Tell the shop anything useful — crop notes, gift message, landmark for delivery…"
               />
+              <p className="mt-1.5 text-xs text-slate-500">The shop sees this comment with your order.</p>
             </div>
 
             <fieldset>
