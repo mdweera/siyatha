@@ -17,22 +17,28 @@ export default function LanguageSwitch() {
   };
 
   return (
-    <div className="inline-flex rounded-[12px] border border-[var(--line)] bg-white p-1 text-sm font-semibold" role="group" aria-label="Language">
+    <div
+      className="inline-flex h-9 items-center rounded-full border border-[var(--line)] bg-white p-0.5 text-xs font-bold"
+      role="group"
+      aria-label="Language"
+    >
       <button
         type="button"
         onClick={() => choose("si")}
-        className={`min-h-11 rounded-[10px] px-3 ${lang === "si" ? "bg-[var(--yellow)] text-[var(--ink)]" : "text-[var(--muted)]"}`}
+        className={`rounded-full px-2.5 py-1.5 ${lang === "si" ? "bg-[var(--yellow)] text-[var(--ink)]" : "text-[var(--muted)]"}`}
         aria-pressed={lang === "si"}
+        title="සිංහල"
       >
-        සිංහල
+        සි
       </button>
       <button
         type="button"
         onClick={() => choose("en")}
-        className={`min-h-11 rounded-[10px] px-3 ${lang === "en" ? "bg-[var(--yellow)] text-[var(--ink)]" : "text-[var(--muted)]"}`}
+        className={`rounded-full px-2.5 py-1.5 ${lang === "en" ? "bg-[var(--yellow)] text-[var(--ink)]" : "text-[var(--muted)]"}`}
         aria-pressed={lang === "en"}
+        title="English"
       >
-        English
+        EN
       </button>
     </div>
   );
