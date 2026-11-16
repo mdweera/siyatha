@@ -6,6 +6,8 @@ import { useRouter } from "next/navigation";
 import { ImagePlus, Loader2, Minus, Plus, Trash2 } from "lucide-react";
 import { useCartStore } from "@/store/useCartStore";
 import { trackEvent } from "@/lib/analytics";
+import { croppedPrintFile } from "@/lib/cropPrint";
+import { printFileExtension } from "@/lib/printFiles";
 import {
   FINISHES,
   PRINT_FAMILIES,
@@ -47,7 +49,7 @@ function measurePhoto(url: string): Promise<{ width: number; height: number }> {
 }
 
 const MAX_PHOTOS = 40;
-const MAX_BYTES = 8 * 1024 * 1024;
+const MAX_BYTES = 12 * 1024 * 1024;
 
 type PrintStudioProps = {
   initialFamily?: string;
@@ -134,13 +136,13 @@ export default function PrintStudio({ initialFamily, initialSize }: PrintStudioP
     const problems: string[] = [];
 
     incoming.forEach((file) => {
-      if (!["image/jpeg", "image/png", "image/webp"].includes(file.type)) {
-        problems.push(`${file.name} needs to be a JPG, PNG, or WEBP.`);
+      if (!printFileExtension(file.name, file.type)) {
+        problems.push(`${file.name} needs to be a JPG, PNG, WEBP, or iPhone HEIC photo.`);
         return;
       }
 
       if (file.size > MAX_BYTES) {
-        problems.push(`${file.name} is over 8 MB. Send that one on WhatsApp.`);
+        problems.push(`${file.name} is over 12 MB. Send that one on WhatsApp.`);
         return;
       }
 
@@ -158,28 +160,20 @@ export default function PrintStudio({ initialFamily, initialSize }: PrintStudioP
       });
     });
 
-    let kept: DraftPhoto[] = [];
-    setPhotos((current) => {
-      const room = MAX_PHOTOS - current.length;
-      if (room <= 0) {
-        problems.push(`You can add up to ${MAX_PHOTOS} photos in one order.`);
-        next.forEach((photo) => URL.revokeObjectURL(photo.previewUrl));
-        return current;
-      }
-
-      if (next.length > room) {
-        problems.push(`Only ${room} more photo${room === 1 ? "" : "s"} fit in this order.`);
-        next.slice(room).forEach((photo) => URL.revokeObjectURL(photo.previewUrl));
-      }
-
-      kept = next.slice(0, room);
-      return [...current, ...kept];
-    });
-
+    const room = Math.max(0, MAX_PHOTOS - photos.length);
+    const accepted = next.slice(0, room);
+    if (room === 0 && next.length > 0) {
+      problems.push(`You can add up to ${MAX_PHOTOS} photos in one order.`);
+      next.forEach((photo) => URL.revokeObjectURL(photo.previewUrl));
+    } else if (next.length > room) {
+      problems.push(`Only ${room} more photo${room === 1 ? "" : "s"} fit in this order.`);
+      next.slice(room).forEach((photo) => URL.revokeObjectURL(photo.previewUrl));
+    }
     setError(problems[0] || "");
-    if (kept.length > 0) {
-      trackEvent("upload_started", { count: kept.length, sizeId: size?.id });
-      kept.forEach((photo) => {
+    if (accepted.length > 0) {
+      setPhotos((current) => [...current, ...accepted].slice(0, MAX_PHOTOS));
+      trackEvent("upload_started", { count: accepted.length, sizeId: size?.id });
+      accepted.forEach((photo) => {
         void measurePhoto(photo.previewUrl).then((dims) => {
           setPhotos((current) => current.map((item) => (item.localId === photo.localId ? { ...item, ...dims } : item)));
         });
@@ -210,8 +204,10 @@ export default function PrintStudio({ initialFamily, initialSize }: PrintStudioP
   };
 
   const uploadPhoto = async (photo: DraftPhoto) => {
+    const aspect = size ? printAspect(size) : { width: 6, height: 4 };
+    const printable = photo.width > 0 ? await croppedPrintFile(photo.file, photo.cropX, photo.cropY, aspect) : photo.file;
     const body = new FormData();
-    body.set("file", photo.file);
+    body.set("file", printable);
     const response = await fetch("/api/photo-prints/upload", { method: "POST", body });
     const payload = (await response.json()) as { url?: string; originalName?: string; error?: string };
     if (!response.ok || !payload.url) {
@@ -393,13 +389,13 @@ export default function PrintStudio({ initialFamily, initialSize }: PrintStudioP
             <ImagePlus className="text-[#B10C53]" />
             <span className="mt-3 font-display text-lg font-bold text-slate-900">Drop photos here or tap to choose</span>
             <span className="mt-1 max-w-md text-sm text-slate-600">
-              JPG, PNG, or WEBP. Up to 8 MB each. Phone photos are fine. We print borderless, so keep faces away from the edge.
+              JPG, PNG, WEBP, or iPhone HEIC. Up to 12 MB each. Drag the photo to choose what stays in the print.
             </span>
           </button>
           <input
             ref={inputRef}
             type="file"
-            accept="image/jpeg,image/png,image/webp"
+            accept="image/jpeg,image/png,image/webp,image/heic,image/heif,.heic,.heif,.jpg,.jpeg,.png,.webp"
             multiple
             className="sr-only"
             onChange={(event) => {

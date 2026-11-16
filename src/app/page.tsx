@@ -1,9 +1,19 @@
+import Image from "next/image";
 import Link from "next/link";
-import { ArrowRight, Clock3, MessageCircle, ShieldCheck, Truck } from "lucide-react";
+import { ArrowRight, Camera, Clock3, MessageCircle, Package, Palette, ShieldCheck, Truck } from "lucide-react";
+import HeroCarousel from "@/components/home/HeroCarousel";
 import { getShopSettings } from "@/lib/shopDelivery";
 import { formatRs, pricedPrintSizes, printFaqs, whatsappHref } from "@/lib/storefront";
 import { t } from "@/lib/i18n";
 import { getLang, pageMeta } from "@/lib/site";
+
+const SAMPLE_PRINTS = [
+  { src: "/carousel-01.webp", alt: "Printed photos of family, travel, and pets on a wooden table" },
+  { src: "/carousel-02.webp", alt: "Photo prints of children and a family standing at the beach" },
+  { src: "/carousel-03.jpg", alt: "Photo print sizes from a 4 by 6 to a large family print" },
+  { src: "/carousel-04.jpg", alt: "Birthday photo prints and a first birthday card" },
+  { src: "/carousel-05.jpg", alt: "Framed beach photos beside loose prints on a shelf" },
+];
 
 export const dynamic = "force-dynamic";
 
@@ -31,8 +41,9 @@ export default async function HomePage() {
         : "The cart shows the delivery fee before you pay.";
 
   return (
-    <div className="px-4 py-8 sm:px-6 lg:px-8">
-      <div className="mx-auto flex w-full max-w-7xl flex-col gap-12">
+    <div>
+      <HeroCarousel />
+      <div className="mx-auto flex w-full max-w-7xl flex-col gap-12 px-4 py-8 sm:px-6 lg:px-8">
         <section className="grid items-center gap-8 lg:grid-cols-[1.1fr_0.9fr]">
           <div>
             <p className="text-sm font-semibold text-[var(--muted)]">{copy.promise}</p>
@@ -60,14 +71,49 @@ export default async function HomePage() {
 
         <section className="grid gap-3 md:grid-cols-3">
           {[
-            { href: "/photo-prints", title: copy.printsTitle, text: copy.printsText, meta: lang === "si" ? `රු. ${fromPrice.toLocaleString("en-LK")} සිට` : `From ${formatRs(fromPrice)}` },
-            { href: "/packaging", title: copy.packTitle, text: copy.packText, meta: copy.packMeta },
-            { href: "/craft", title: copy.craftTitle, text: copy.craftText, meta: copy.craftMeta },
+            {
+              href: "/photo-prints",
+              title: copy.printsTitle,
+              text: copy.printsText,
+              meta: lang === "si" ? `රු. ${fromPrice.toLocaleString("en-LK")} සිට` : `From ${formatRs(fromPrice)}`,
+              image: "/carousel-02.webp",
+              icon: Camera,
+              tone: "bg-[#DE2684] text-white",
+            },
+            {
+              href: "/packaging",
+              title: copy.packTitle,
+              text: copy.packText,
+              meta: copy.packMeta,
+              image: "",
+              icon: Package,
+              tone: "bg-[#F2B400] text-[#111]",
+            },
+            {
+              href: "/craft",
+              title: copy.craftTitle,
+              text: copy.craftText,
+              meta: copy.craftMeta,
+              image: "",
+              icon: Palette,
+              tone: "bg-[#681878] text-white",
+            },
           ].map((card) => (
-            <Link key={card.href} href={card.href} className="surface-card p-5 no-underline">
-              <h2 className="text-xl font-bold">{card.title}</h2>
-              <p className="mt-2 text-sm leading-6 text-[var(--muted)]">{card.text}</p>
-              <p className="mt-4 text-sm font-bold">{card.meta}</p>
+            <Link key={card.href} href={card.href} className="surface-card overflow-hidden p-0 no-underline">
+              {card.image ? (
+                <div className="relative h-40">
+                  <Image src={card.image} alt="" fill className="object-cover" sizes="(max-width: 768px) 100vw, 33vw" />
+                </div>
+              ) : (
+                <div className={`flex h-40 items-center justify-center ${card.tone}`}>
+                  <card.icon size={42} />
+                </div>
+              )}
+              <div className="p-5">
+                <h2 className="text-xl font-bold">{card.title}</h2>
+                <p className="mt-2 text-sm leading-6 text-[var(--muted)]">{card.text}</p>
+                <p className="mt-4 text-sm font-bold">{card.meta}</p>
+              </div>
             </Link>
           ))}
         </section>
@@ -81,7 +127,7 @@ export default async function HomePage() {
               [copy.step3, copy.step3Text],
             ].map(([title, text], index) => (
               <li key={title} className="surface-card p-4">
-                <span className="inline-flex h-8 w-8 items-center justify-center rounded-full bg-[var(--ink)] text-sm font-bold text-white">{index + 1}</span>
+                <span className={`inline-flex h-8 w-8 items-center justify-center rounded-full text-sm font-bold ${index === 1 ? "bg-[#F2B400] text-[#111]" : index === 2 ? "bg-[#681878] text-white" : "bg-[#DE2684] text-white"}`}>{index + 1}</span>
                 <h3 className="mt-3 font-bold">{title}</h3>
                 <p className="mt-1 text-sm leading-6 text-[var(--muted)]">{text}</p>
               </li>
@@ -106,27 +152,35 @@ export default async function HomePage() {
 
         <section className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
           {[
-            { icon: Clock3, text: copy.trustShip },
-            { icon: ShieldCheck, text: copy.trustFile },
-            { icon: Truck, text: fee },
-            { icon: MessageCircle, text: copy.trustChat },
+            { icon: Clock3, text: copy.trustShip, tone: "bg-[#DE2684] text-white" },
+            { icon: ShieldCheck, text: copy.trustFile, tone: "bg-[#00A36A] text-white" },
+            { icon: Truck, text: fee, tone: "bg-[#F2B400] text-[#111]" },
+            { icon: MessageCircle, text: copy.trustChat, tone: "bg-[#25D366] text-[#083018]" },
           ].map((item) => (
             <div key={item.text} className="rounded-[12px] bg-[var(--yellow-tint)] p-4">
-              <item.icon size={18} />
-              <p className="mt-2 text-sm leading-6">{item.text}</p>
+              <span className={`inline-flex h-10 w-10 items-center justify-center rounded-2xl ${item.tone}`}>
+                <item.icon size={18} />
+              </span>
+              <p className="mt-3 text-sm leading-6">{item.text}</p>
             </div>
           ))}
         </section>
 
-        <section className="grid gap-4 lg:grid-cols-2">
-          <div className="surface-card p-5">
-            <h2 className="text-xl font-bold">{copy.galleryTitle}</h2>
-            <p className="mt-2 text-sm leading-6 text-[var(--muted)]">{copy.galleryBody}</p>
+        <section>
+          <h2 className="text-2xl font-bold">{copy.galleryTitle}</h2>
+          <p className="mt-2 max-w-2xl text-sm leading-6 text-[var(--muted)]">{copy.galleryBody}</p>
+          <div className="mt-4 grid grid-cols-2 gap-3 lg:grid-cols-5">
+            {SAMPLE_PRINTS.map((photo) => (
+              <Link key={photo.src} href="/photo-prints/order" className="relative block aspect-[4/3] overflow-hidden rounded-[12px]">
+                <Image src={photo.src} alt={photo.alt} fill className="object-cover" sizes="(max-width: 1024px) 50vw, 20vw" />
+              </Link>
+            ))}
           </div>
-          <div className="surface-card p-5">
-            <h2 className="text-xl font-bold">{copy.reviewTitle}</h2>
-            <p className="mt-2 text-sm leading-6 text-[var(--muted)]">{copy.reviewBody}</p>
-          </div>
+        </section>
+
+        <section className="surface-card p-5">
+          <h2 className="text-xl font-bold">{copy.reviewTitle}</h2>
+          <p className="mt-2 text-sm leading-6 text-[var(--muted)]">{copy.reviewBody}</p>
         </section>
 
         <section>

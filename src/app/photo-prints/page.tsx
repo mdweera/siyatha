@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
+import Image from "next/image";
 import Link from "next/link";
-import { ArrowRight } from "lucide-react";
+import { ArrowRight, Camera, CreditCard, Frame, IdCard } from "lucide-react";
 import {
   FINISHES,
   PRINT_FAMILIES,
@@ -61,30 +62,43 @@ export default async function PhotoPrintsPage() {
     <div className="px-4 py-8 sm:px-6 lg:px-8">
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
       <div className="mx-auto w-full max-w-7xl space-y-12">
-        <section className="surface-card rounded-[2rem] p-6 sm:p-8">
-          <p className="text-sm text-slate-500">Home / Photo prints</p>
-          <p className="vibrant-chip mt-4 inline-block rounded-full px-3 py-1 text-xs font-semibold uppercase tracking-[0.14em]">
-            Photo print Sri Lanka
-          </p>
-          <h1 className="mt-4 max-w-3xl font-display text-4xl font-black leading-tight text-slate-900 sm:text-5xl">
-            Upload the photos. We ship the prints within one business day.
-          </h1>
-          <p className="mt-4 max-w-2xl text-base leading-7 text-slate-700">
-            Standard copies, enlargements, passport sheets, and photo cards on lustre, glossy, or matte paper.
-            A photo order placed on a working day is shipped the same business day, then the courier takes it across Sri Lanka.
-          </p>
-          <div className="mt-6 flex flex-wrap gap-3">
-            <Link href="/photo-prints/order" className="btn-primary no-underline">
-              Upload photos <ArrowRight size={16} />
-            </Link>
-            <a
-              href={whatsappHref("Hello Siyatha, I want a photo print quote.")}
-              target="_blank"
-              rel="noreferrer"
-              className="btn-whatsapp no-underline"
-            >
-              WhatsApp a quote
-            </a>
+        <section className="grid items-center gap-6 lg:grid-cols-[1.1fr_0.9fr]">
+          <div className="surface-card rounded-[2rem] p-6 sm:p-8">
+            <p className="text-sm text-slate-500">Home / Photo prints</p>
+            <p className="vibrant-chip mt-4 inline-block rounded-full px-3 py-1 text-xs font-semibold uppercase tracking-[0.14em]">
+              Photo print Sri Lanka
+            </p>
+            <h1 className="mt-4 max-w-3xl font-display text-4xl font-black leading-tight text-slate-900 sm:text-5xl">
+              Upload the photos. We ship the prints within one business day.
+            </h1>
+            <p className="mt-4 max-w-2xl text-base leading-7 text-slate-700">
+              Standard copies, enlargements, passport sheets, and photo cards on lustre, glossy, or matte paper.
+              A photo order placed on a working day is shipped the same business day, then the courier takes it across Sri Lanka.
+            </p>
+            <div className="mt-6 flex flex-wrap gap-3">
+              <Link href="/photo-prints/order" className="btn-primary no-underline">
+                Upload photos <ArrowRight size={16} />
+              </Link>
+              <a
+                href={whatsappHref("Hello Siyatha, I want a photo print quote.")}
+                target="_blank"
+                rel="noreferrer"
+                className="btn-whatsapp no-underline"
+              >
+                WhatsApp a quote
+              </a>
+            </div>
+          </div>
+          <div className="grid grid-cols-2 gap-3">
+            <div className="relative col-span-2 aspect-[16/9] overflow-hidden rounded-[1.5rem]">
+              <Image src="/carousel-01.webp" alt="Printed photos of family, travel, and pets" fill className="object-cover" sizes="(max-width: 1024px) 100vw, 40vw" priority />
+            </div>
+            <div className="relative aspect-[4/3] overflow-hidden rounded-[1.25rem]">
+              <Image src="/carousel-04.jpg" alt="Birthday photo prints" fill className="object-cover" sizes="20vw" />
+            </div>
+            <div className="relative aspect-[4/3] overflow-hidden rounded-[1.25rem]">
+              <Image src="/carousel-03.jpg" alt="Photo print sizes laid out on a table" fill className="object-cover" sizes="20vw" />
+            </div>
           </div>
         </section>
 
@@ -122,13 +136,19 @@ export default async function PhotoPrintsPage() {
             {PRINT_FAMILIES.map((family) => {
               const from = lowestFamilyPrice(family.id, sizes);
               const first = sizesForFamily(family.id, sizes)[0];
+              const icon = family.id === "enlargements" ? Frame : family.id === "passport" ? IdCard : family.id === "cards" ? CreditCard : Camera;
+              const tone = family.id === "enlargements" ? "bg-[#681878] text-white" : family.id === "passport" ? "bg-[#F2B400] text-[#111]" : family.id === "cards" ? "bg-[#B10C53] text-white" : "bg-[#DE2684] text-white";
+              const Icon = icon;
               return (
                 <Link
                   key={family.id}
                   href={`/photo-prints/order?family=${family.id}${first ? `&size=${first.id}` : ""}`}
                   className="surface-card rounded-[1.75rem] p-5 transition hover:-translate-y-0.5"
                 >
-                  <p className="text-xs font-semibold uppercase tracking-[0.14em] text-[#B10C53]">From {formatRs(from)}</p>
+                  <span className={`inline-flex h-11 w-11 items-center justify-center rounded-2xl ${tone}`}>
+                    <Icon size={20} />
+                  </span>
+                  <p className="mt-4 text-xs font-semibold uppercase tracking-[0.14em] text-[#B10C53]">From {formatRs(from)}</p>
                   <h3 className="mt-2 font-display text-2xl font-bold text-slate-900">{family.title}</h3>
                   <p className="mt-2 text-sm leading-6 text-slate-600">{family.text}</p>
                   <p className="mt-4 text-sm font-semibold text-slate-900">Open this size <ArrowRight className="inline" size={14} /></p>

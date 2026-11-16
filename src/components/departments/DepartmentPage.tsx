@@ -1,5 +1,21 @@
 import Link from "next/link";
-import { MessageCircle } from "lucide-react";
+import {
+  Barcode,
+  Box,
+  Droplet,
+  FileText,
+  Heart,
+  MessageCircle,
+  Package,
+  Palette,
+  Ribbon,
+  Scissors,
+  ScrollText,
+  Shirt,
+  Sparkles,
+  Tag,
+  type LucideIcon,
+} from "lucide-react";
 import StockCard from "@/components/shop/StockCard";
 import type { ShopProduct } from "@/lib/publishedProducts";
 import { departments, productSearchText, whatsappHref, type DepartmentId } from "@/lib/storefront";
@@ -8,6 +24,25 @@ import { getLang } from "@/lib/site";
 type DepartmentPageProps = {
   dept: DepartmentId;
   products: ShopProduct[];
+};
+
+const CATEGORY_ICONS: Record<string, { icon: LucideIcon; tone: string }> = {
+  mailers: { icon: Package, tone: "bg-[#F2B400] text-[#111]" },
+  boxes: { icon: Box, tone: "bg-[#DE2684] text-white" },
+  bubble: { icon: Package, tone: "bg-[#681878] text-white" },
+  tape: { icon: Tag, tone: "bg-[#B10C53] text-white" },
+  thanks: { icon: Heart, tone: "bg-[#DE2684] text-white" },
+  labels: { icon: Tag, tone: "bg-[#F2B400] text-[#111]" },
+  tissue: { icon: ScrollText, tone: "bg-[#CD7DA2] text-[#2b1636]" },
+  thermal: { icon: Barcode, tone: "bg-[#111] text-[#F2B400]" },
+  paper: { icon: FileText, tone: "bg-[#F2B400] text-[#111]" },
+  glue: { icon: Droplet, tone: "bg-[#681878] text-white" },
+  cut: { icon: Scissors, tone: "bg-[#DE2684] text-white" },
+  sew: { icon: Shirt, tone: "bg-[#B10C53] text-white" },
+  ribbon: { icon: Ribbon, tone: "bg-[#CD7DA2] text-[#2b1636]" },
+  paint: { icon: Palette, tone: "bg-[#681878] text-white" },
+  felt: { icon: Sparkles, tone: "bg-[#F2B400] text-[#111]" },
+  bits: { icon: Sparkles, tone: "bg-[#DE2684] text-white" },
 };
 
 const guides: Record<DepartmentId, Array<{ title: string; text: string }>> = {
@@ -33,7 +68,10 @@ export default async function DepartmentPage({ dept, products }: DepartmentPageP
     <div className="px-4 py-8 sm:px-6 lg:px-8">
       <div className="mx-auto flex w-full max-w-7xl flex-col gap-10">
         <section className="surface-card p-6 sm:p-8">
-          <p className="text-sm font-semibold text-[var(--muted)]">{department.eyebrow}</p>
+          <span className={`inline-flex h-14 w-14 items-center justify-center rounded-2xl ${dept === "packaging" ? "bg-[#F2B400] text-[#111]" : "bg-[#681878] text-white"}`}>
+            {dept === "packaging" ? <Package size={28} /> : <Palette size={28} />}
+          </span>
+          <p className="mt-4 text-sm font-semibold text-[var(--muted)]">{department.eyebrow}</p>
           <h1 className="mt-2 text-4xl font-bold text-[var(--ink)]">{title}</h1>
           <p className="mt-4 max-w-2xl text-base leading-7 text-[var(--muted)]">{department.summary}</p>
           <div className="mt-6 flex flex-wrap gap-3">
@@ -61,9 +99,14 @@ export default async function DepartmentPage({ dept, products }: DepartmentPageP
             {department.categories.map((category) => {
               const count = products.filter((product) => productSearchText(product).includes(category.query.toLowerCase())).length;
               const href = count > 0 ? `/shop?dept=${department.id}&q=${encodeURIComponent(category.query)}` : whatsapp;
+              const mark = CATEGORY_ICONS[category.id] ?? { icon: Package, tone: "bg-[#F2B400] text-[#111]" };
+              const Icon = mark.icon;
               return (
                 <a key={category.id} href={href} className="surface-card p-4 no-underline" {...(count === 0 ? { target: "_blank", rel: "noreferrer" } : {})}>
-                  <h3 className="font-bold">{category.title}</h3>
+                  <span className={`inline-flex h-10 w-10 items-center justify-center rounded-2xl ${mark.tone}`}>
+                    <Icon size={18} />
+                  </span>
+                  <h3 className="mt-3 font-bold">{category.title}</h3>
                   <p className="mt-2 text-sm leading-6 text-[var(--muted)]">{category.text}</p>
                   <p className="mt-3 text-sm font-semibold">{count > 0 ? `${count} in stock` : "Ask on WhatsApp"}</p>
                 </a>

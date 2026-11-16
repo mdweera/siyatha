@@ -211,7 +211,7 @@ export const PRINT_FAQS: Array<{ question: string; answer: string }> = [
   {
     question: "What photo files can I upload?",
     answer:
-      "JPG, PNG, and WEBP from a phone or camera. Each file can be up to 8 MB. A sharp 4×6 is about 1200×1800 pixels. Smaller phone photos still print; we message you if the picture will look soft. We print borderless, so leave a little space around faces.",
+      "JPG, PNG, WEBP, and iPhone HEIC from a phone or camera. Each file can be up to 12 MB. A sharp 4×6 is about 1200×1800 pixels. Smaller phone photos still print; we message you if the picture will look soft. We print borderless, so leave a little space around faces.",
   },
   {
     question: "Do you print passport photos?",

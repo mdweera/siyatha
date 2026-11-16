@@ -25,12 +25,12 @@ export default function ShippingNotice() {
       : "Photo prints ship within one business day";
 
   return (
-    <div className="bg-gradient-to-r from-[#DE2684] via-[#F2B400] to-[#F9E094] text-[#2b1636]">
-      <div className="mx-auto flex w-full max-w-7xl items-center justify-between gap-3 px-4 py-2 text-sm sm:px-6 lg:px-8">
+    <div className="bg-[#F2B400] text-[#111]">
+      <div className="mx-auto flex w-full max-w-7xl items-center justify-between gap-3 px-4 py-2 text-sm font-semibold sm:px-6 lg:px-8">
         <p>{message}</p>
         <button
           type="button"
-          className="inline-flex h-11 w-11 shrink-0 items-center justify-center rounded-full border border-[#2b1636]/20 bg-white/40"
+          className="inline-flex h-11 w-11 shrink-0 items-center justify-center rounded-full border border-[#111]/25 bg-[#111]/5"
           aria-label={lang === "si" ? "වසන්න" : "Dismiss shipping note"}
           onClick={() => {
             window.sessionStorage.setItem("siyatha-ship-note", "hidden");

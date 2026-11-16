@@ -14,3 +14,6 @@
 - Public colours keep pink `#DE2684`, crimson `#B10C53`, purple `#681878`, and cream `#F9E094`, with yellow `#F2B400` on primary buttons and the delivery progress. WhatsApp actions use `#25D366`. A dismissible one-day banner sits at the top. The bottom bar shows the cart total and how much is left for free delivery.
 - Photo print prices and the two bulk discounts are `Settings.onlinePrintPrices` in `pos_app_sl`. Siyatha reads them with delivery through `getShopSettings()`. The built-in list in `src/lib/storefront.ts` is the fallback. Checkout reprices from that record.
 - Checkout does not require an account. The shop grid shows packaging and craft unless the visitor searches. WhatsApp actions use `#25D366`.
+- The one-day shipping bar is solid yellow `#F2B400` with black text. No gradient.
+- Home carousel photos are `public/carousel-01.webp` through `public/carousel-05.jpg`. Slide 01 is the table of prints.
+- Photo uploads go to Cloudinary folder `siyatha/prints` when `CLOUDINARY_API_KEY`, `CLOUDINARY_API_SECRET`, and `NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME` are set. Otherwise they are written to `public/uploads/prints`. JPG, PNG, WEBP, and HEIC are accepted, including phone photos with an empty MIME type. The crop is baked in the browser before upload.

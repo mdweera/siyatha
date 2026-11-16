@@ -11,6 +11,8 @@ import {
   Crown,
   Filter,
   Grid3X3,
+  Package,
+  Palette,
   Search,
   ShoppingBag,
   SlidersHorizontal,
@@ -348,7 +350,8 @@ export default function ShopClient({
                     : "border-slate-200 bg-white hover:-translate-y-0.5 hover:border-cyan-200 hover:shadow-sm"
                 }`}
               >
-                <div className="flex aspect-[4/3] items-end bg-[var(--yellow-tint)] p-4">
+                <div className={`flex aspect-[4/3] flex-col items-start justify-between p-4 ${option.key === "packaging" ? "bg-[#F2B400] text-[#111]" : "bg-[#681878] text-white"}`}>
+                  {option.key === "packaging" ? <Package size={36} /> : <Palette size={36} />}
                   <p className="text-sm font-semibold">{count > 0 ? `${count} in stock` : "Ask on WhatsApp"}</p>
                 </div>
                 <div className="p-4">

@@ -1,6 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
-import { ArrowRight } from "lucide-react";
+import { ArrowRight, ImageIcon } from "lucide-react";
 import type { ShopProduct } from "@/lib/publishedProducts";
 
 type StockCardProps = {
@@ -32,7 +32,10 @@ export default function StockCard({ product }: StockCardProps) {
             className="object-cover transition duration-500 group-hover:scale-105"
           />
         ) : (
-          <div className="flex h-full items-center justify-center px-4 text-center text-sm font-semibold text-[#B10C53]">
+          <div className="flex h-full flex-col items-center justify-center gap-2 px-4 text-center text-sm font-semibold text-[#B10C53]">
+            <span className="inline-flex h-12 w-12 items-center justify-center rounded-2xl bg-[#DE2684] text-white">
+              <ImageIcon size={22} />
+            </span>
             {product.category || "Siyatha"}
           </div>
         )}
