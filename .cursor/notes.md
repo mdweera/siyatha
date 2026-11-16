@@ -28,3 +28,4 @@
 - Print family photos live in `public/print-photos/` (`copies`, `enlargements`, `passport`, `cards`, `family`), saved locally as JPEG so no hotlink. CC0 Unsplash shots mirrored on Wikimedia Commons; swap any file to use the shop's own pictures. `PRINT_FAMILIES[].image` / `imageAlt` drive the "Choose a print" cards.
 - Keyboard: navbar search opens on `/` or ⌘/Ctrl+K, `Enter` opens the first match (or `/shop?q=`), `Esc` closes. Shop search: `Esc` clears, `Enter` applies. Track code: `Esc` clears. Print studio: `Enter` continues, `Esc` goes back. Shared `isTypingTarget()` lives in `src/lib/keyboard.ts`.
 - The circled "1" in "within 1 business day" is purple `#681878` with white text. `/photo-prints/order` opens with a four-step flow card above the studio.
+- Auth is one popup (`LoginModal` via `AuthModalProvider`): Sign in / Create account tabs. `/login` → `/?login=1`, `/register` → `/?register=1`. Use `openLogin()` / `openRegister()`.
