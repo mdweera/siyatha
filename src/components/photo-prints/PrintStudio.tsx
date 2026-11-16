@@ -3,7 +3,7 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { ImagePlus, Loader2, Minus, Plus, Trash2 } from "lucide-react";
+import { ArrowLeft, ImagePlus, Loader2, Minus, Plus, Trash2 } from "lucide-react";
 import { useCartStore } from "@/store/useCartStore";
 import { trackEvent } from "@/lib/analytics";
 import { croppedPrintFile } from "@/lib/cropPrint";
@@ -333,7 +333,20 @@ export default function PrintStudio({ initialFamily, initialSize }: PrintStudioP
   const steps = ["Print", "Size", "Photos", "Review"];
 
   return (
-    <div className="mx-auto max-w-3xl">
+    <div className="group/wizard relative mx-auto max-w-3xl">
+      <div
+        className="pointer-events-none absolute left-1/2 top-0 z-20 -translate-x-1/2 -translate-y-1/2 opacity-0 transition duration-150 group-hover/wizard:opacity-100"
+        aria-hidden="true"
+      >
+        <span className="inline-flex items-center gap-1.5 rounded-full border border-[#CD7DA2]/40 bg-white px-3 py-1 text-[11px] font-medium text-slate-600 shadow-sm">
+          <kbd className="rounded-md border border-slate-200 bg-[#fff8ee] px-1.5 py-0.5 font-semibold text-slate-700">Enter</kbd>
+          continues
+          <span>·</span>
+          <kbd className="rounded-md border border-slate-200 bg-[#fff8ee] px-1.5 py-0.5 font-semibold text-slate-700">Esc</kbd>
+          goes back a step
+        </span>
+      </div>
+
       <ol className="grid grid-cols-4 gap-2">
         {steps.map((label, index) => {
           const active = index === step;
@@ -349,11 +362,11 @@ export default function PrintStudio({ initialFamily, initialSize }: PrintStudioP
                   }
                 }}
                 disabled={!done && !active}
-                className={`flex w-full flex-col items-start rounded-2xl border px-3 py-3 text-left ${
+                className={`flex w-full cursor-pointer flex-col items-start rounded-2xl border px-3 py-3 text-left transition hover:-translate-y-0.5 hover:shadow-sm disabled:cursor-default disabled:hover:translate-y-0 disabled:hover:shadow-none ${
                   active
-                    ? "border-[#F2B400] bg-[#F2B400] text-[#111]"
+                    ? "border-[#F2B400] bg-[#F2B400] text-[#111] hover:bg-[#e0a400]"
                     : done
-                      ? "border-[#681878] bg-white text-[#681878]"
+                      ? "border-[#681878] bg-white text-[#681878] hover:border-[#DE2684] hover:bg-[#fff1d6]"
                       : "border-[var(--line)] bg-white/60 text-slate-400"
                 }`}
               >
@@ -364,14 +377,6 @@ export default function PrintStudio({ initialFamily, initialSize }: PrintStudioP
           );
         })}
       </ol>
-
-      <p className="mt-2 flex flex-wrap items-center gap-1.5 text-[11px] text-[var(--muted)]">
-        <kbd className="rounded-md border border-[var(--line)] bg-white px-1.5 py-0.5 font-semibold">Enter</kbd>
-        continues
-        <span aria-hidden="true">·</span>
-        <kbd className="rounded-md border border-[var(--line)] bg-white px-1.5 py-0.5 font-semibold">Esc</kbd>
-        goes back a step
-      </p>
 
       <div className="mt-5">
         {step === 0 ? (
@@ -386,8 +391,8 @@ export default function PrintStudio({ initialFamily, initialSize }: PrintStudioP
                   key={item.id}
                   type="button"
                   onClick={() => selectFamily(item.id)}
-                  className={`rounded-2xl border px-4 py-3 text-left transition ${
-                    active ? "border-[#DE2684] bg-[#fff1d6]" : "border-slate-200 bg-white hover:border-[#CD7DA2]"
+                  className={`cursor-pointer rounded-2xl border px-4 py-3 text-left transition hover:-translate-y-0.5 hover:shadow-sm ${
+                    active ? "border-[#DE2684] bg-[#fff1d6]" : "border-slate-200 bg-white hover:border-[#CD7DA2] hover:bg-[#fffaf0]"
                   }`}
                 >
                   <span className="block font-display text-base font-bold text-slate-900">{item.title}</span>
@@ -411,8 +416,10 @@ export default function PrintStudio({ initialFamily, initialSize }: PrintStudioP
                   key={item.id}
                   type="button"
                   onClick={() => selectSize(item.id)}
-                  className={`rounded-2xl border px-3 py-2 text-left transition ${
-                    active ? "border-[#681878] bg-[#681878] text-white" : "border-slate-200 bg-white text-slate-800 hover:border-[#CD7DA2]"
+                  className={`cursor-pointer rounded-2xl border px-3 py-2 text-left transition hover:-translate-y-0.5 hover:shadow-sm ${
+                    active
+                      ? "border-[#681878] bg-[#681878] text-white hover:bg-[#571466]"
+                      : "border-slate-200 bg-white text-slate-800 hover:border-[#CD7DA2] hover:bg-[#fffaf0]"
                   }`}
                 >
                   <span className="block text-sm font-bold">{item.label}</span>
@@ -477,8 +484,8 @@ export default function PrintStudio({ initialFamily, initialSize }: PrintStudioP
                       setFinishId(item.id);
                     }
                   }}
-                  className={`rounded-2xl border px-3 py-3 text-left transition ${
-                    active ? "border-[#DE2684] bg-[#fff6ea]" : "border-slate-200 bg-white hover:border-[#CD7DA2]"
+                  className={`cursor-pointer rounded-2xl border px-3 py-3 text-left transition hover:-translate-y-0.5 hover:shadow-sm ${
+                    active ? "border-[#DE2684] bg-[#fff6ea]" : "border-slate-200 bg-white hover:border-[#CD7DA2] hover:bg-[#fffaf0]"
                   }`}
                 >
                   <span className="block text-sm font-bold text-slate-900">{item.title}</span>
@@ -501,8 +508,8 @@ export default function PrintStudio({ initialFamily, initialSize }: PrintStudioP
               setDragOver(false);
               addFiles(event.dataTransfer.files);
             }}
-            className={`mt-4 flex w-full flex-col items-center justify-center rounded-[1.5rem] border-2 border-dashed px-6 py-10 text-center transition ${
-              dragOver ? "border-[#DE2684] bg-[#fff1d6]" : "border-[#CD7DA2]/50 bg-white hover:bg-[#fffaf0]"
+            className={`mt-4 flex w-full cursor-pointer flex-col items-center justify-center rounded-[1.5rem] border-2 border-dashed px-6 py-10 text-center transition hover:-translate-y-0.5 hover:shadow-sm ${
+              dragOver ? "border-[#DE2684] bg-[#fff1d6]" : "border-[#CD7DA2]/50 bg-white hover:border-[#DE2684] hover:bg-[#fffaf0]"
             }`}
           >
             <ImagePlus className="text-[#B10C53]" />
@@ -587,7 +594,7 @@ export default function PrintStudio({ initialFamily, initialSize }: PrintStudioP
                       <div className="inline-flex items-center rounded-full border border-slate-200">
                         <button
                           type="button"
-                          className="p-2 text-slate-600"
+                          className="cursor-pointer p-2 text-slate-600 transition hover:text-[#681878]"
                           onClick={() => setQuantity(photo.localId, photo.quantity - 1)}
                           aria-label={`Fewer copies of ${photo.file.name}`}
                         >
@@ -596,7 +603,7 @@ export default function PrintStudio({ initialFamily, initialSize }: PrintStudioP
                         <span className="w-8 text-center text-sm font-semibold">{photo.quantity}</span>
                         <button
                           type="button"
-                          className="p-2 text-slate-600"
+                          className="cursor-pointer p-2 text-slate-600 transition hover:text-[#681878]"
                           onClick={() => setQuantity(photo.localId, photo.quantity + 1)}
                           aria-label={`More copies of ${photo.file.name}`}
                         >
@@ -606,7 +613,7 @@ export default function PrintStudio({ initialFamily, initialSize }: PrintStudioP
                       <button
                         type="button"
                         onClick={() => removePhoto(photo.localId)}
-                        className="rounded-full p-2 text-slate-500 hover:bg-[#fff1d6] hover:text-[#B10C53]"
+                        className="cursor-pointer rounded-full p-2 text-slate-500 transition hover:bg-[#fff1d6] hover:text-[#B10C53]"
                         aria-label={`Remove ${photo.file.name}`}
                       >
                         <Trash2 size={16} />
@@ -656,7 +663,7 @@ export default function PrintStudio({ initialFamily, initialSize }: PrintStudioP
           type="button"
           onClick={addOrderToCart}
           disabled={uploading || photos.length === 0}
-          className="btn-primary mt-4 w-full disabled:cursor-not-allowed disabled:bg-[var(--line)]"
+          className="btn-primary mt-4 w-full cursor-pointer disabled:cursor-not-allowed disabled:bg-[var(--line)]"
         >
           {uploading ? <Loader2 size={16} className="animate-spin" /> : null}
           {uploading ? progress || "Uploading" : "Add prints to cart"}
@@ -701,12 +708,17 @@ function WizardNav({
   return (
     <div className="mt-5 flex flex-wrap gap-3">
       {onBack ? (
-        <button type="button" onClick={onBack} className="btn-secondary">
+        <button
+          type="button"
+          onClick={onBack}
+          className="inline-flex min-h-11 cursor-pointer items-center justify-center gap-2 rounded-[12px] border border-[var(--ink)] bg-white px-4 text-sm font-semibold text-[var(--ink)] transition hover:border-[#681878] hover:bg-[#fff1d6] hover:text-[#681878]"
+        >
+          <ArrowLeft size={16} />
           Back
         </button>
       ) : null}
       {onNext ? (
-        <button type="button" onClick={onNext} className="btn-primary">
+        <button type="button" onClick={onNext} className="btn-primary cursor-pointer">
           {nextLabel || "Continue"}
         </button>
       ) : null}

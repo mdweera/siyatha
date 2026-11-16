@@ -39,16 +39,7 @@ export default async function PhotoPrintOrderPage({
         </p>
 
         <section aria-label="How a photo print order goes" className="surface-card mt-6 rounded-[1.5rem] p-4 sm:p-5">
-          <div className="flex flex-wrap items-center justify-between gap-2">
-            <h2 className="text-xs font-semibold uppercase tracking-[0.14em] text-[#B10C53]">How the order goes</h2>
-            <p className="flex flex-wrap items-center gap-1.5 text-[11px] text-slate-500">
-              <kbd className="rounded-md border border-slate-200 bg-white px-1.5 py-0.5 font-semibold">Enter</kbd>
-              continues
-              <span aria-hidden="true">·</span>
-              <kbd className="rounded-md border border-slate-200 bg-white px-1.5 py-0.5 font-semibold">Esc</kbd>
-              goes back a step
-            </p>
-          </div>
+          <h2 className="text-xs font-semibold uppercase tracking-[0.14em] text-[#B10C53]">How the order goes</h2>
           <ol className="mt-3 grid gap-2 sm:grid-cols-2 lg:grid-cols-4">
             {flow.map((step, index) => (
               <li key={step.title} className="relative rounded-2xl border border-slate-200 bg-white px-3 py-3">
